@@ -2,7 +2,7 @@ use actix_web::{HttpResponse, Responder, cookie::Cookie, post, web};
 use redis::{AsyncCommands, RedisError};
 use serde::Deserialize;
 use deadpool_redis::Pool as RedisPool;
-use crate::{data::user::USERS_DATA, util::log_error};
+use crate::{data::user::get_users_data, util::log_error};
 
 #[derive(Deserialize)]
 struct UserData {
@@ -18,18 +18,18 @@ pub async fn post(pool: web::Data<RedisPool>, data: web::Json<UserData>) -> impl
       let target_user_token = data.token;
       
       // Check in the users hashmap
-      let data_user_token = USERS_DATA.get(&target_user_fullname);
+      let data_user_token = get_users_data().await.get(&target_user_fullname);
       let data_user_token = match data_user_token {
-            Some(data) => data,
+            Some(data) => data.to_string(),
             None => {
                   return HttpResponse::NotFound();
             }
       };
       
       // Check in the Redis if the token is resetted
-      let mut redis_connection = pool.get().await.unwrap();
+      let mut redis_connection: deadpool_redis::Connection = pool.get().await.unwrap();
       let redis_user_token_result: Result<Option<String>, RedisError> = redis_connection.hget("token_reset", target_user_fullname).await;
-      let redis_user_token_maybe = match redis_user_token_result {
+      let redis_user_token_maybe: Option<String> = match redis_user_token_result {
             Ok(data) => data,
             Err(err) => {
                   log_error("UserGet", err.to_string().as_str());
@@ -43,7 +43,7 @@ pub async fn post(pool: web::Data<RedisPool>, data: web::Json<UserData>) -> impl
       }
       
       // If there's no targetted user token in redis check with the default data user token
-      if redis_user_token_maybe.is_none() && &target_user_token != data_user_token { 
+      if redis_user_token_maybe.is_none() && target_user_token != data_user_token { 
             return HttpResponse::Unauthorized();
       }
 

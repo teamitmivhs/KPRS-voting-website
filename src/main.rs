@@ -1,11 +1,14 @@
 use actix_web::{App, HttpServer, middleware::from_fn, web};
-use kprs_web_api::{data::user::USERS_DATA, middleware::middleware, routes::user::{user_get_api, user_reset_api, user_vote_api}, util::log_something};
+use kprs_web_api::{data::user::get_users_data, middleware::middleware, routes::user::{user_get_api, user_reset_api, user_vote_api}, util::log_something};
 use deadpool_redis::{Config as RedisConfig, Runtime as RedisRuntime};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    // Setup dotenv
+    dotenvy::dotenv().unwrap();
+    
     // Setup Static Data
-    USERS_DATA.capacity();
+    get_users_data().await;
 
     
     // Setup Redis

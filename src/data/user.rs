@@ -1,28 +1,39 @@
-use std::{collections::HashMap, fs::File, io::{BufRead, BufReader}};
-use once_cell::sync::Lazy;
+use dashmap::DashMap;
+use tokio::sync::OnceCell;
+use sqlx::{Pool, Postgres};
+
+use crate::db::get_all_users;
 
 
-pub static USERS_DATA: Lazy<HashMap<String, String>> = Lazy::new(|| {
-      // Create a variable that can hold the data
-      let mut users_data: HashMap<String, String> = HashMap::new();
+pub static USERS_DATA: OnceCell<DashMap<String, String>> = OnceCell::const_new();
 
-      // Get the file stream from user.txt
-      let users_data_file = File::open("src/data/user.txt").unwrap();
+pub async fn get_users_data<'a>() -> &'a DashMap<String, String> {
+      let data = USERS_DATA.get_or_init(async || {
+            // Get the database URL from environment variable
+            let database_url: String = std::env::var("DATABASE_URL")
+              .expect("DATABASE_URL must be set");
+      
+            // Get the pool to the database
+            let pool: Pool<Postgres> = sqlx::postgres::PgPoolOptions::new()
+                  .max_connections(10)
+                  .connect(&database_url)
+                  .await
+                  .unwrap();
 
-      // Get the buffer reader
-      let reader = BufReader::new(users_data_file);
+            // Get the user data
+            let db_all_users = get_all_users(&pool).await.unwrap();
+            
+            // Create a variable that can hold the data
+            let users_data: DashMap<String, String> = DashMap::new();
 
-      // Iterate for each line
-      for line in reader.lines() {
-            let line = line.unwrap();                                                         // Panic if there's an error reading the file
-            let splitted_text = line.splitn(2, "_").collect::<Vec<&str>>();         // Split line by underscore (_)
-            let [fullname, token] = [                                                 // Get the fullname and token for each line
-                  splitted_text.first().unwrap().to_string(),
-                  splitted_text.last().unwrap().to_string()
-            ];
-            users_data.insert(fullname, token);                                                  // Push the fullname and token to the users data
-      }
+            // Iterate each users in database
+            for db_user in db_all_users {
+                  users_data.insert(db_user.name, db_user.token);
+            }
+      
+            // Return the result
+            users_data
+      }).await;
 
-      // Return the result
-      return users_data;
-});
+      return &data;
+}
