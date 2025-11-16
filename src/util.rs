@@ -12,3 +12,7 @@ pub fn get_time() -> String {
 pub fn log_something(scope_title: &str, message: &str) {
       println!("[{}] [{}] {}", get_time(), scope_title, message);
 }
+
+pub fn log_error(scope_title: &str, message: &str) {
+      println!("[{}] [ERROR] [{}] {}", get_time(), scope_title, message);
+}
