@@ -1,14 +1,13 @@
-use dashmap::DashMap;
 use tokio::sync::OnceCell;
 use sqlx::{Pool, Postgres};
 
-use crate::{db::get_all_users, util::log_something};
+use crate::{db::get_all_candidates, util::log_something};
 
 
-pub static USERS_DATA: OnceCell<DashMap<String, String>> = OnceCell::const_new();
+pub static CANDIDATES_DATA: OnceCell<Vec<String>> = OnceCell::const_new();
 
-pub async fn get_users_data<'a>() -> &'a DashMap<String, String> {
-      let data = USERS_DATA.get_or_init(async || {
+pub async fn get_candidates_data<'a>() -> &'a Vec<String> {
+      let data = CANDIDATES_DATA.get_or_init(async || {
             // Get the database URL from environment variable
             let database_url: String = std::env::var("DATABASE_URL")
               .expect("DATABASE_URL must be set");
@@ -21,24 +20,24 @@ pub async fn get_users_data<'a>() -> &'a DashMap<String, String> {
                   .unwrap();
 
                   
-            // Get the user data
-            let db_all_users = get_all_users(&pool).await.unwrap();
+            // Get the candidate data
+            let db_all_candidates = get_all_candidates(&pool).await.unwrap();
 
 
             // Create a variable that can hold the data
-            let users_data: DashMap<String, String> = DashMap::new();
+            let mut candidates_data: Vec<String> = Vec::new();
             
-            // Iterate each users in database
-            for db_user in db_all_users {
-                  users_data.insert(db_user.name, db_user.token);
+            // Iterate each candidate in database
+            for db_candidate in db_all_candidates {
+                  candidates_data.push(db_candidate.name);
             }
       
 
             // Log the success message
-            log_something("StaticData", "Static users data successfully initialized.");
+            log_something("StaticData", "Static candidates data successfully initialized.");
 
             // Return the result
-            users_data
+            candidates_data
       }).await;
 
       return &data;

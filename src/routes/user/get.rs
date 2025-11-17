@@ -11,7 +11,7 @@ struct UserData {
 }
 
 #[post("/user/get")]
-pub async fn post(pool: web::Data<RedisPool>, data: web::Json<UserData>) -> impl Responder {      
+pub async fn post(redis_pool: web::Data<RedisPool>, data: web::Json<UserData>) -> impl Responder {      
       // Get the targetted user data token
       let data = data.into_inner();
       let target_user_fullname = data.fullname;
@@ -27,7 +27,7 @@ pub async fn post(pool: web::Data<RedisPool>, data: web::Json<UserData>) -> impl
       };
       
       // Check in the Redis if the token is resetted
-      let mut redis_connection: deadpool_redis::Connection = pool.get().await.unwrap();
+      let mut redis_connection: deadpool_redis::Connection = redis_pool.get().await.unwrap();
       let redis_user_token_result: Result<Option<String>, RedisError> = redis_connection.hget("token_reset", target_user_fullname).await;
       let redis_user_token_maybe: Option<String> = match redis_user_token_result {
             Ok(data) => data,
@@ -49,7 +49,7 @@ pub async fn post(pool: web::Data<RedisPool>, data: web::Json<UserData>) -> impl
 
       
       // Create response object and add cookie 
-      let cookie_user_token = Cookie::build("user_token", target_user_token)
+      let cookie_user_token = Cookie::build("voter_token", target_user_token)
             .path("/")
             .secure(true)
             .http_only(true)
