@@ -1,6 +1,80 @@
-use actix_web::{post, HttpResponse, Responder};
+use std::env;
+
+use actix_web::{HttpRequest, HttpResponse, post, web};
+use deadpool_redis::{Pool as RedisPool, self};
+use redis::AsyncCommands;
+use serde::{Deserialize, Serialize};
+use sqlx::{Pool, Postgres};
+
+use crate::{data::user::get_users_data, db::remove_vote, util::{generate_token, log_error, log_something}};
+
+#[derive(Deserialize)]
+struct ResetBodyRequestType {
+      voter_fullname: String
+}
+
+#[derive(Serialize)]
+struct ResetBodyResponseType {
+      new_token: String
+}
+
 
 #[post("/user/reset")]
-pub async fn post() -> impl Responder {
+pub async fn post(body: web::Json<ResetBodyRequestType>, req: HttpRequest, redis_pool: web::Data<RedisPool>, postgres_pool: web::Data<Pool<Postgres>>) -> HttpResponse {
+      // Verify the admin token from cookies
+      let admin_token_cookie = req.cookie("admin_token");
+      let admin_token_cookie = match admin_token_cookie {
+            Some(cookie) => cookie.value().to_string(),
+            None => {
+                  return HttpResponse::NotFound().finish();
+            }
+      };
+      
+      let valid_admin_token = env::var("ADMIN_TOKEN").unwrap();
+      if admin_token_cookie != valid_admin_token {
+            return HttpResponse::Unauthorized().finish();
+      }
+
+
+      // Get the voter fullname
+      let reset_body_data = body.into_inner();
+      let target_voter_fullname = reset_body_data.voter_fullname;
+
+
+      // Verify the voter is exists
+      let users_data = get_users_data().await;
+      if !users_data.contains_key(&target_voter_fullname) {
+            log_something("PostReset", format!("An admin just wanting to reset a user that doesn't exists: {}", target_voter_fullname).as_str());
+            return HttpResponse::NotFound().finish();
+      }
+
+
+      // Generate new token
+      let new_voter_token: String = generate_token();
+      
+      
+      // Add the token of the voter to the Redis database
+      let mut redis_connection: deadpool_redis::Connection = redis_pool.get().await.unwrap();
+      let _: () = redis_connection.hset("token_reset", target_voter_fullname.clone(), new_voter_token.clone()).await.unwrap();
+
+
+      // Reset the vote from database
+      let remove_vote_result = remove_vote(&postgres_pool, target_voter_fullname.as_str()).await;
+      match remove_vote_result {
+            Ok(res) => {
+                  log_something("PostReset", format!("Successfully remove {} vote from {}", res.rows_affected(), target_voter_fullname).as_str());
+            },
+            Err(err) => {
+                  log_error("PostReset", format!("Failed remove a vote from {}. Error: {}", target_voter_fullname, err.to_string()).as_str());
+                  return HttpResponse::InternalServerError().finish();
+            }
+      }
+
+      
+      // Sends OK! with the data!
       HttpResponse::Ok()
+            .content_type("application/json")
+            .json(ResetBodyResponseType {
+                  new_token: new_voter_token
+            })
 }

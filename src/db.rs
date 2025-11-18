@@ -61,3 +61,10 @@ pub async fn insert_vote(pool: &Pool<Postgres>, voter_name: String, candidate_na
             .execute(pool)
             .await
 }
+
+pub async fn remove_vote(pool: &Pool<Postgres>, voter_name: &str) -> Result<PgQueryResult, sqlx::Error> {
+      sqlx::query("DELETE FROM votes WHERE voter_name = $1")
+            .bind(voter_name)
+            .execute(pool)
+            .await
+}
