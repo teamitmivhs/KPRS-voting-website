@@ -5,9 +5,15 @@ static DATETIME_FMT: &[time::format_description::FormatItem<'static>] = format_d
 
 pub fn get_time() -> String {
       let utc = OffsetDateTime::now_utc();
-      let local = utc.to_offset(offset!(+7));
-      
-      return local.format(DATETIME_FMT).unwrap().to_string();
+      let result_time = utc.to_offset(offset!(+7)).format(DATETIME_FMT);
+
+      match result_time {
+            Ok(data) => data.to_string(),
+            Err(err) => {
+                  log_error("Util", format!("There's an error when get the current time. Error: {}", err.to_string()).as_str());
+                  String::from("--:--:--")
+            }
+      }
 }
 
 pub fn log_something(scope_title: &str, message: &str) {

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use actix_web::{HttpRequest, HttpResponse, Responder, post, web};
 use dashmap::DashMap;
-use deadpool_redis::{Pool as RedisPool, self};
+use deadpool_redis::{self, Pool as RedisPool, PoolError};
 use redis::{AsyncCommands, RedisError};
 use serde::Deserialize;
 use sqlx::{Pool, Postgres};
@@ -16,24 +16,32 @@ struct VoteBodyRequest {
 
 
 #[post("/voter/vote")]
-pub async fn post(body: web::Json<VoteBodyRequest>, req: HttpRequest, redis_pool: web::Data<RedisPool>, postgres_pool: web::Data<Pool<Postgres>>) -> impl Responder {
+pub async fn post(body: web::Json<VoteBodyRequest>, req: HttpRequest, redis_pool: web::Data<RedisPool>, postgres_pool: web::Data<Pool<Postgres>>) -> HttpResponse {
       // Get the user token from request cookies
       let cookie_user_token = req.cookie("voter_token");
       let cookie_user_token = match cookie_user_token {
             Some(data) => data.value().to_string(),
             None => {
-                  return HttpResponse::Unauthorized();
+                  return HttpResponse::Unauthorized().finish();
             }
       };
 
       // Verify the token from checking into the redis database
-      let mut redis_connection: deadpool_redis::Connection = redis_pool.get().await.unwrap();
+      let redis_connection_result: Result<deadpool_redis::Connection, PoolError>  = redis_pool.get().await;
+      let mut redis_connection: deadpool_redis::Connection = match redis_connection_result {
+            Ok(connection) => connection,
+            Err(err) => {
+                  log_error("PostReset", format!("There's an error when trying to get admin redis pool. Error: {}", err.to_string()).as_str());
+                  return HttpResponse::InternalServerError().finish();
+            }
+      };
+      
       let redis_user_token_result: Result<HashMap<String, String>, RedisError>  = redis_connection.hgetall("voter_token_reset").await;
       let redis_user_tokens: HashMap<String, String> = match redis_user_token_result {
             Ok(data) => data,
             Err(err) => {
                   log_error("PostVote", err.to_string().as_str());
-                  return HttpResponse::InternalServerError();
+                  return HttpResponse::InternalServerError().finish();
             }
       };
       let redis_user_name: Option<String> = redis_user_tokens.iter().find(|(_, v)| v == &&cookie_user_token).map(|user_data| user_data.0.clone());
@@ -58,11 +66,17 @@ pub async fn post(body: web::Json<VoteBodyRequest>, req: HttpRequest, redis_pool
       };
 
       if redis_user_name.is_none() && (redis_user_token_by_data_user_name.is_some() || data_user_fullname.is_none()) {
-            return HttpResponse::Unauthorized();
+            return HttpResponse::Unauthorized().finish();
       }
 
       let target_voter_fullname = redis_user_name.unwrap_or(
-            data_user_fullname.unwrap()
+            match data_user_fullname {
+                  Some(data) => data,
+                  None => {
+                        log_error("PostVote", "The voter data from either Static data and Redis data is empty but the condition passes!");
+                        return HttpResponse::Unauthorized().finish();
+                  }
+            }
       );
 
 
@@ -75,7 +89,7 @@ pub async fn post(body: web::Json<VoteBodyRequest>, req: HttpRequest, redis_pool
       let candidates_data = get_candidates_data().await;
       if !candidates_data.contains(&target_candidate_fullname) {
             log_something("PostVote", format!("{} has votes {} that is currently not registered", target_voter_fullname, target_candidate_fullname).as_str());
-            return HttpResponse::BadRequest();
+            return HttpResponse::BadRequest().finish();
       }
       
       
@@ -88,7 +102,7 @@ pub async fn post(body: web::Json<VoteBodyRequest>, req: HttpRequest, redis_pool
             },
             Err(err) => {
                   log_error("PostVote", format!("There's an error when trying to update vote record into the database. Error: {}", err.to_string()).as_str());
-                  return HttpResponse::InternalServerError();
+                  return HttpResponse::InternalServerError().finish();
             }
       }
 
@@ -99,7 +113,7 @@ pub async fn post(body: web::Json<VoteBodyRequest>, req: HttpRequest, redis_pool
       // Check for invalid candidate's name
       if !static_votes_data.contains_key(&target_candidate_fullname) {
             log_error("PostVote", "The candidate is not found");
-            return HttpResponse::BadRequest();
+            return HttpResponse::BadRequest().finish();
       }
 
       // Increment the vote data that is from hashmap
@@ -110,5 +124,5 @@ pub async fn post(body: web::Json<VoteBodyRequest>, req: HttpRequest, redis_pool
       
       
       // Return OK
-      HttpResponse::Ok()
+      HttpResponse::Ok().finish()
 }

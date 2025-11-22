@@ -2,7 +2,7 @@ use dashmap::DashMap;
 use tokio::sync::OnceCell;
 use sqlx::{Pool, Postgres};
 
-use crate::{db::get_all_users, util::log_something};
+use crate::{db::get_all_users, util::{log_error, log_something}};
 
 
 pub static USERS_DATA: OnceCell<DashMap<String, String>> = OnceCell::const_new();
@@ -14,15 +14,28 @@ pub async fn get_voters_data<'a>() -> &'a DashMap<String, String> {
               .expect("DATABASE_URL must be set");
       
             // Get the pool to the database
-            let pool: Pool<Postgres> = sqlx::postgres::PgPoolOptions::new()
+            let pool: Result<Pool<Postgres>, sqlx::Error> = sqlx::postgres::PgPoolOptions::new()
                   .max_connections(10)
                   .connect(&database_url)
-                  .await
-                  .unwrap();
+                  .await;
+            let pool = match pool {
+                  Ok(pool_obj) => pool_obj,
+                  Err(err) => {
+                        log_error("StaticData", format!("There's an error when getting pool from postgres. Error: {}", err.to_string()).as_str());
+                        return DashMap::new();
+                  }
+            };
 
                   
             // Get the user data
-            let db_all_users = get_all_users(&pool).await.unwrap();
+            let db_all_users = get_all_users(&pool).await;
+            let db_all_users = match db_all_users {
+                  Ok(data) => data,
+                  Err(err) => {
+                        log_error("StaticData", format!("There's an error when trying to get all voters from postgres. Error: {}", err.to_string()).as_str());
+                        return DashMap::new();
+                  }
+            };
 
 
             // Create a variable that can hold the data

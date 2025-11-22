@@ -1,8 +1,8 @@
 use std::env;
 
 use actix_web::{HttpRequest, HttpResponse, post, web};
-use deadpool_redis::{Pool as RedisPool, self};
-use redis::AsyncCommands;
+use deadpool_redis::{self, Pool as RedisPool, PoolError};
+use redis::{AsyncCommands, RedisError};
 use serde::{Deserialize, Serialize};
 use sqlx::{Pool, Postgres};
 
@@ -30,7 +30,16 @@ pub async fn post(body: web::Json<ResetBodyRequestType>, req: HttpRequest, redis
             }
       };
       
-      let valid_admin_token = env::var("ADMIN_TOKEN").unwrap();
+      let valid_admin_token = env::var("ADMIN_TOKEN");
+      let valid_admin_token = match valid_admin_token {
+            Ok(data) => data,
+            Err(err) => {
+                  log_error("PostReset", format!("There's an error when trying to get admin token from ENV. Error: {}", err.to_string()).as_str());
+                  return HttpResponse::InternalServerError().finish();
+            }
+      };
+
+
       if admin_token_cookie != valid_admin_token {
             return HttpResponse::Unauthorized().finish();
       }
@@ -54,8 +63,24 @@ pub async fn post(body: web::Json<ResetBodyRequestType>, req: HttpRequest, redis
       
       
       // Add the token of the voter to the Redis database
-      let mut redis_connection: deadpool_redis::Connection = redis_pool.get().await.unwrap();
-      let _: () = redis_connection.hset("voter_token_reset", target_voter_fullname.clone(), new_voter_token.clone()).await.unwrap();
+      let redis_connection_result: Result<deadpool_redis::Connection, PoolError>  = redis_pool.get().await;
+      let mut redis_connection: deadpool_redis::Connection = match redis_connection_result {
+            Ok(connection) => connection,
+            Err(err) => {
+                  log_error("PostReset", format!("There's an error when trying to get admin redis pool. Error: {}", err.to_string()).as_str());
+                  return HttpResponse::InternalServerError().finish();
+            }
+      };
+
+      
+      let insert_result: Result<(), RedisError> = redis_connection.hset("voter_token_reset", target_voter_fullname.clone(), new_voter_token.clone()).await;
+      match insert_result {
+            Ok(_) => (),
+            Err(err) => {
+                  log_error("PostReset", format!("There's an error when trying to reset a voter token to Redis. Error: {}", err.to_string()).as_str());
+                  return HttpResponse::InternalServerError().finish();
+            }
+      }
 
 
       // Reset the vote from database

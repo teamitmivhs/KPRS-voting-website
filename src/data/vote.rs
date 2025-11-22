@@ -14,19 +14,38 @@ pub async fn get_votes_count<'a>() -> &'a DashMap<String, AtomicUsize> {
               .expect("DATABASE_URL must be set");
       
             // Get the pool to the database
-            let pool: Pool<Postgres> = sqlx::postgres::PgPoolOptions::new()
+            let pool: Result<Pool<Postgres>, sqlx::Error> = sqlx::postgres::PgPoolOptions::new()
                   .max_connections(10)
                   .connect(&database_url)
-                  .await
-                  .unwrap();
+                  .await;
+            let pool = match pool {
+                  Ok(pool_obj) => pool_obj,
+                  Err(err) => {
+                        log_error("StaticData", format!("There's an error when getting pool from postgres. Error: {}", err.to_string()).as_str());
+                        return DashMap::new();
+                  }
+            };
 
             
             // Get the votes data
-            let db_all_votes: Vec<Vote> = get_all_votes(&pool).await.unwrap();
-
-            // Get the candidates data
-            let db_all_candidates: Vec<Candidate> = get_all_candidates(&pool).await.unwrap();
+            let db_all_votes = get_all_votes(&pool).await;
+            let db_all_votes: Vec<Vote> = match db_all_votes {
+                  Ok(data) => data,
+                  Err(err) => {
+                        log_error("StaticData", format!("There's an error when trying to get all votes from postgres. Error: {}", err.to_string()).as_str());
+                        return DashMap::new();
+                  }
+            };
             
+            // Get the candidates data
+            let db_all_candidates = get_all_candidates(&pool).await;
+            let db_all_candidates = match db_all_candidates {
+                  Ok(data) => data,
+                  Err(err) => {
+                        log_error("StaticData", format!("There's an error when trying to get all candidates from postgres. Error: {}", err.to_string()).as_str());
+                        return DashMap::new();
+                  }
+            };
             
             // Create a variable that can hold the data
             let votes_count: DashMap<String, AtomicUsize> = DashMap::new();
