@@ -54,6 +54,7 @@ async fn main() -> std::io::Result<()> {
             .service(voter_vote_api)
             .service(admin_reset_api)
             .service(admin_token_api)
+            .service(admin_votes_api)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
