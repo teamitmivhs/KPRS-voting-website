@@ -18,7 +18,7 @@
             if (result === undefined) {
                   toasts.add({
                         title: 'Login',
-                        message: 'Login successful',
+                        message: 'Login berhasil',
                         type: 'success',
                         duration: 2000
                   });
@@ -29,8 +29,16 @@
             }
 		else if (result === ApiError.Unauthorized) {
                   toasts.add({
-                        title: 'Wrong Token',
-                        message: 'Token is not valid',
+                        title: 'Token Tidak Valid',
+                        message: 'Token tidak valid',
+                        type: 'error',
+                        duration: 5000
+                  });
+		}
+		else if (result === ApiError.NotFound) {
+                  toasts.add({
+                        title: 'Pengguna Tidak Ditemukan',
+                        message: 'Pengguna tidak ditemukan',
                         type: 'error',
                         duration: 5000
                   });
@@ -38,15 +46,15 @@
             else if (result === ApiError.ServerError) {
                   toasts.add({
                         title: 'Server Error!',
-                        message: 'Something went wrong',
+                        message: 'Terjadi kesalahan pada server',
                         type: 'error',
                         duration: 5000
                   });
             }
             else {
                   toasts.add({
-                        title: 'Unknown Error!',
-                        message: 'Something went wrong',
+                        title: 'Terjadi kesalahan!',
+                        message: 'Terjadi kesalahan',
                         type: 'error',
                         duration: 5000
                   });
