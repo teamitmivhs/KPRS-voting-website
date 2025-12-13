@@ -8,6 +8,7 @@ export enum ApiError {
 	BadRequest = 'BadRequest', // 400
 	Unauthorized = 'Unauthorized', // 401
 	NotFound = 'NotFound', // 404
+	Conflict = 'Conflict', // 409
 	TooManyRequests = 'TooManyRequests', // 429
 	ServerError = 'ServerError', // 500
 	ServiceUnavailable = 'ServiceUnavailable', // 503
@@ -62,6 +63,8 @@ async function request<T>(
 					return ApiError.Unauthorized;
 				case 404:
 					return ApiError.NotFound;
+				case 409:
+					return ApiError.Conflict;
 				case 429:
 					return ApiError.TooManyRequests;
 				case 500:
@@ -108,6 +111,15 @@ export const api = {
 	},
 
 	/**
+	 * Logout
+	 * Request: (cookies only)
+	 * Response: HTTP Status Only (void on success) or ApiError
+	 */
+	logout: async (): Promise<undefined | ApiError> => {
+		return request<undefined>('/voter/logout', 'POST');
+	},
+
+	/**
 	 * Reset Vote
 	 * Request: voter_fullname (and cookies)
 	 * Response: new_token or ApiError
@@ -123,5 +135,5 @@ export const api = {
 	 */
 	getTokens: async (): Promise<GetTokensResponse | ApiError> => {
 		return request<GetTokensResponse>('/admin/token', 'GET');
-	}
+	},
 };

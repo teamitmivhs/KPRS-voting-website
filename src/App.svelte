@@ -4,11 +4,13 @@
       import Gate from "./routes/Gate.svelte";
       import Vote from "./routes/Vote.svelte";
       import ToastContainer from "./components/common/ToastContainer.svelte";
+      import Logout from "./routes/Logout.svelte";
 
       const routes = {
             "/": Home,
             "/gate": Gate,
-            "/vote": Vote
+            "/vote": Vote,
+            "/logout": Logout
       };
 </script>
 
