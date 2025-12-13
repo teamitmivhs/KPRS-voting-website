@@ -2,10 +2,10 @@
       import { api, ApiError } from "../../lib/api";
       import { toasts } from "../../lib/toast";
 
-      let isLoading = false;
-
-	let username = '';
-	let token = '';
+      let isLoading = $state(false);
+      
+      let username = $state('');
+      let token = $state('');
 
 	async function handleLogin(event: Event) {
 		event.preventDefault();
