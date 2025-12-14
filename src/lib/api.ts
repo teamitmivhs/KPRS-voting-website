@@ -4,6 +4,18 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 /*                                    Types                                   */
 /* -------------------------------------------------------------------------- */
 
+export enum Campus {
+	MM = 'MM',
+	PD = 'PD'
+}
+
+export interface UserData {
+	name: string;
+	token: string;
+	campus: Campus;
+	class: string;
+}
+
 export enum ApiError {
 	BadRequest = 'BadRequest', // 400
 	Unauthorized = 'Unauthorized', // 401
@@ -97,8 +109,8 @@ export const api = {
 	 * Request: fullname, token
 	 * Response: HTTP Status Only (void on success) or ApiError
 	 */
-	getUserData: async (fullname: string, token: string): Promise<undefined | ApiError> => {
-		return request<undefined>(`/voter/get`, 'POST', { fullname, token });
+	getUserData: async (fullname: string, token: string): Promise<UserData | ApiError> => {
+		return request<UserData>(`/voter/get`, 'POST', { fullname, token });
 	},
 
 	/**

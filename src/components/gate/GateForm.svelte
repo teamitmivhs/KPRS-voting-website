@@ -1,65 +1,70 @@
 <script lang="ts">
       import { api, ApiError } from "../../lib/api";
       import { toasts } from "../../lib/toast";
+      import { userdataStore } from "../../lib/userdata";
 
       let isLoading = $state(false);
-      
-      let username = $state('');
-      let token = $state('');
 
-	async function handleLogin(event: Event) {
-		event.preventDefault();
-            if(isLoading) return;
+      let username = $state("");
+      let token = $state("");
+
+      $effect(() => {
+            userdataStore.subscribe((value) => {
+                  console.log(value);
+            });
+      });
+
+      async function handleLogin(event: Event) {
+            event.preventDefault();
+            if (isLoading) return;
 
             isLoading = true;
-		const result = await api.getUserData(username, token);
+            const result = await api.getUserData(username, token);
             isLoading = false;
 
-            if (result === undefined) {
+            if (typeof result == "object") {
                   toasts.add({
-                        title: 'Login',
-                        message: 'Login berhasil',
-                        type: 'success',
-                        duration: 2000
+                        title: "Login",
+                        message: "Login berhasil",
+                        type: "success",
+                        duration: 2000,
                   });
 
+                  userdataStore.set(result);
+
                   setTimeout(() => {
-                        window.location.hash = '/vote';
+                        window.location.hash = "/vote";
                   }, 2000);
-            }
-		else if (result === ApiError.Unauthorized) {
+            } else if (result === ApiError.Unauthorized) {
                   toasts.add({
-                        title: 'Token Tidak Valid',
-                        message: 'Token tidak valid',
-                        type: 'error',
-                        duration: 5000
+                        title: "Token Tidak Valid",
+                        message: "Token tidak valid",
+                        type: "error",
+                        duration: 5000,
                   });
-		}
-		else if (result === ApiError.NotFound) {
+            } else if (result === ApiError.NotFound) {
                   toasts.add({
-                        title: 'Pengguna Tidak Ditemukan',
-                        message: 'Pengguna tidak ditemukan',
-                        type: 'error',
-                        duration: 5000
+                        title: "Pengguna Tidak Ditemukan",
+                        message: "Pengguna tidak ditemukan",
+                        type: "error",
+                        duration: 5000,
                   });
-		}
-            else if (result === ApiError.ServerError) {
+            } else if (result === ApiError.ServerError) {
                   toasts.add({
-                        title: 'Server Error!',
-                        message: 'Terjadi kesalahan pada server',
-                        type: 'error',
-                        duration: 5000
+                        title: "Server Error!",
+                        message: "Terjadi kesalahan pada server",
+                        type: "error",
+                        duration: 5000,
                   });
-            }
-            else {
+            } else {
                   toasts.add({
-                        title: 'Terjadi kesalahan!',
-                        message: 'Terjadi kesalahan',
-                        type: 'error',
-                        duration: 5000
+                        title: "Terjadi kesalahan!",
+                        message: "Terjadi kesalahan",
+                        type: "error",
+                        duration: 5000,
                   });
             }
-	}
+      }
 </script>
 
 <form onsubmit={handleLogin} class="flex flex-col **:text-[#8a7143] gap-4 w-[90vw] md:w-full max-w-sm bg-white text-[#8a7143] p-8 rounded-2xl shadow-xl border border-[#8a7143]/10">
@@ -88,8 +93,14 @@
       </div>
 
       <div class="flex justify-center">
-            <button type="submit" disabled={isLoading} class="{isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} mt-4 bg-white text-[#8a7143] rounded-full px-6 py-3 text-xl font-semibold cursor-pointer duration-150 border border-2 border-[#8a7143] satisfying-button">
-                  {isLoading ? 'Loading...' : 'Enter Gate'}
+            <button
+                  type="submit"
+                  disabled={isLoading}
+                  class="{isLoading
+                        ? 'opacity-50 cursor-not-allowed'
+                        : 'cursor-pointer'} mt-4 bg-white text-[#8a7143] rounded-full px-6 py-3 text-xl font-semibold cursor-pointer duration-150 border border-2 border-[#8a7143] satisfying-button"
+            >
+                  {isLoading ? "Loading..." : "Enter Gate"}
             </button>
       </div>
 </form>
