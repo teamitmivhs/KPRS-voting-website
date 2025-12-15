@@ -141,6 +141,15 @@ export const api = {
 	},
 
 	/**
+	 * Admin Login
+	 * Request: fullname, token
+	 * Response: HTTP Status Only (void on success) or ApiError
+	 */
+	adminLogin: async (admin_id: string, admin_password: string): Promise<undefined | ApiError> => {
+		return request<undefined>(`/admin/login`, 'POST', { admin_id, admin_password });
+	},
+
+	/**
 	 * Reset Vote
 	 * Request: voter_fullname (and cookies)
 	 * Response: new_token or ApiError

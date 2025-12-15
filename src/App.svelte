@@ -5,25 +5,22 @@
       import Vote from "./routes/Vote.svelte";
       import ToastContainer from "./components/common/ToastContainer.svelte";
       import Logout from "./routes/Logout.svelte";
+      import AdminGate from "./routes/AdminGate.svelte";
 
       const routes = {
             "/": Home,
             "/gate": Gate,
             "/vote": Vote,
-            "/logout": Logout
+            "/logout": Logout,
+            "/admin": AdminGate,
       };
 </script>
 
 <svelte:head>
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-      <link href="https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+      <link href="https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
 </svelte:head>
-
 
 <Router {routes} />
 <ToastContainer />
-
-
-
-
