@@ -55,19 +55,15 @@ pub async fn handle_live_changes() {
 
 
             'notification_loop: while let Some(result) = live.next().await {
-                  if let Err(err) = result {
-                        log_error("LiveUpdate", format!("There's an error when trying to get the notificaton. Error: {}", err.to_string()).as_str());
-                        continue 'notification_loop;
-                  }
-
                   match result {
-                        Ok(_) => (),
-                        Err(_) => {
+                        Ok(_) => {
+                              update_voters_data().await;
+                        },
+                        Err(err) => {
+                              log_error("LiveUpdate", format!("There's an error when trying to get the notificaton. Error: {}", err.to_string()).as_str());
                               continue 'notification_loop;
                         }
                   };
-
-                  update_voters_data().await;
 
                   log_something("LiveUpdate", "There's an update for voter data!");
             }
@@ -80,19 +76,15 @@ pub async fn handle_live_changes() {
 
 
             'notification_loop: while let Some(result) = live.next().await {
-                  if let Err(err) = result {
-                        log_error("LiveUpdate", format!("There's an error when trying to get the notificaton. Error: {}", err.to_string()).as_str());
-                        continue 'notification_loop;
-                  }
-
                   match result {
-                        Ok(_) => (),
-                        Err(_) => {
+                        Ok(_) => {
+                              update_admin_data().await;
+                        },
+                        Err(err) => {
+                              log_error("LiveUpdate", format!("There's an error when trying to get the notificaton. Error: {}", err.to_string()).as_str());
                               continue 'notification_loop;
                         }
                   };
-
-                  update_admin_data().await;
 
                   log_something("LiveUpdate", "There's an update for admin data!");
             }
