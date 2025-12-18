@@ -1,6 +1,6 @@
 <script lang="ts">
       import { api, ApiError, Campus } from "../../lib/api";
-      import { toasts } from "../../lib/toast";
+      import { toasts } from "../../lib/hooks/useToast";
 
       let isLoading = $state(false);
 
@@ -89,7 +89,7 @@
                   disabled={isLoading}
                   class="{isLoading
                         ? 'opacity-50 cursor-not-allowed'
-                        : 'cursor-pointer'} mt-4 bg-white text-[#8a7143] rounded-full px-6 py-3 text-xl font-semibold cursor-pointer duration-150 border border-2 border-[#8a7143] satisfying-button"
+                        : 'cursor-pointer'} mt-4 bg-white text-[#8a7143] rounded-full px-6 py-3 text-xl font-semibold cursor-pointer duration-150 border-2 border-[#8a7143] satisfying-button"
             >
                   {isLoading ? "Loading..." : "Enter Dashboard"}
             </button>

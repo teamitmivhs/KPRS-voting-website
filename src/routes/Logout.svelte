@@ -1,6 +1,6 @@
 <script lang="ts">
       import { api } from "../lib/api";
-      import { toasts } from "../lib/toast";
+      import { toasts } from "../lib/hooks/useToast";
 
       api.logout().catch(() => {
             toasts.add({

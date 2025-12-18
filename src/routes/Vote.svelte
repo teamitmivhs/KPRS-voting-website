@@ -2,9 +2,9 @@
       import CandidateCard from "../components/vote/CandidateCard.svelte";
       import VoteNavbar from "../components/vote/VoteNavbar.svelte";
       import { api, ApiError, Campus } from "../lib/api";
-      import { toasts } from "../lib/toast";
+      import { toasts } from "../lib/hooks/useToast";
       import type { CandidateType } from "../lib/types";
-      import { userdataStore } from "../lib/userdata";
+      import { userdataStore } from "../lib/hooks/useUserdata";
 
       const candidates: CandidateType[] = [
             {

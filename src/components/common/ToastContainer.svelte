@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { toasts } from '../../lib/toast';
+    import { toasts } from '../../lib/hooks/useToast';
 
     function getToastColor(type: string) {
         switch (type) {

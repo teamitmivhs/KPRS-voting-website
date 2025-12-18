@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import type { UserData } from "./api";
+import type { UserData } from "../api";
 
 const STORAGE_KEY = 'kprs_userdata';
 
