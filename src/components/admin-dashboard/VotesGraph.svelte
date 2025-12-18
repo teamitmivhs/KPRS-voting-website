@@ -1,27 +1,10 @@
 <script lang="ts">
       import Chart from "chart.js/auto";
-      import type { DetailVoteStatsType, VoteStatsType } from "../../lib/types";
+      import { useDetailedVotesStats, useVotesStats } from "../../lib/hooks/useStats";
 
-      let detailedVotesData = $state<DetailVoteStatsType>([
-            {
-                  candidate_name: "Rasyad Rizky Ramadhan",
-                  voter_name: "Ridwan Bagoes Setiawan"
-            },
-            {
-                  candidate_name: "Andrea Farras",
-                  voter_name: "Aldi Fadlurrahman"
-            }
-      ]);
-      let votesData = $state<VoteStatsType>([
-            {
-                  candidate_name: "Rasyad Rizky Ramadhan",
-                  vote_count: 20
-            },
-            {
-                  candidate_name: "Andrea Farras",
-                  vote_count: 30
-            },
-      ]);
+      let detailedVotesData = $useDetailedVotesStats;
+      let votesData = $useVotesStats;
+      
       let numOfVoters = $state<number>(50);
 
       $effect(() => {
