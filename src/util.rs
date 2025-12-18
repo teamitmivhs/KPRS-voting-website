@@ -144,6 +144,6 @@ pub async fn verify_admin_token(admin_token: impl Into<String>) -> Result<Admin,
 
       match admin_data {
             Some(data) => Ok(data.clone()),
-            None => Err(HttpResponse::InternalServerError().finish())
+            None => Err(HttpResponse::Unauthorized().finish())
       }
 }
