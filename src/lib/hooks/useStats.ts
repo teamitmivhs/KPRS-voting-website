@@ -3,16 +3,10 @@ import type { DetailVoteStatsType, VoteStatsType } from "../types";
 
 
 function createDetailedVotesStore() {
-      const { subscribe, set, update  } = writable<DetailVoteStatsType>([
-            {
-                  candidate_name: "Rasyad Rizky Ramadhan",
-                  voter_name: "Ridwan Bagoes Setiawan"
-            },
-            {
-                  candidate_name: "Andrea Farras",
-                  voter_name: "Aldi Fadlurrahman"
-            }
-      ]);
+      const { subscribe, set, update  } = writable<DetailVoteStatsType>({
+            "Ridwan Bagoes Setiawan": "Rasyad Rizky Ramadhan",
+            "Aldi Fadlurrahman": "Andrea Farras"
+      });
 
       return {
             subscribe,

@@ -8,6 +8,7 @@
       let numOfVoters = $state<number>(50);
 
       $effect(() => {
+            let numOfVotes = Object.keys(detailedVotesData).length;
             new Chart(document.getElementById("votersChart")! as HTMLCanvasElement, {
                   type: "pie",
                   data: {
@@ -35,7 +36,7 @@
                         labels: ["Votes", "Not Voted"],
                         datasets: [
                               {
-                                    data: [detailedVotesData.length, numOfVoters-detailedVotesData.length],
+                                    data: [numOfVotes, numOfVoters-numOfVotes],
                                     backgroundColor: ["#0055FF", "#FF0055"],
                               },
                         ],

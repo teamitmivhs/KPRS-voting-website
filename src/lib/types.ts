@@ -15,9 +15,8 @@ export type VoterType = {
 };
 
 export type DetailVoteStatsType = {
-      voter_name: string,
-      candidate_name: string
-}[]
+      [key: string]: string
+}
 
 export type VoteStatsType = {
       candidate_name: string;
