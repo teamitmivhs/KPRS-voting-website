@@ -1,9 +1,9 @@
 import { writable } from "svelte/store";
-import type { UserData } from "../api";
+import type { UserData } from "../types";
 
 const STORAGE_KEY = 'kprs_userdata';
 
-export function createUserdataStore() {
+export function createUserDataStore() {
       // 1. Try to load initial state from localStorage
       let initialValue: UserData | null = null;
 
@@ -40,4 +40,4 @@ export function createUserdataStore() {
       };
 }
 
-export const userdataStore = createUserdataStore();
+export const userDataStore = createUserDataStore();

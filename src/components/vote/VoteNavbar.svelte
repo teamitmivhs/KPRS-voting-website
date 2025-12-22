@@ -1,6 +1,6 @@
 <script lang="ts">
       import profileIcon from "../../assets/icons/profile-icon.webp";
-      import { userdataStore } from "../../lib/hooks/useUserdata";
+      import { userDataStore } from "../../lib/hooks/useUserData";
 
       function handleLogoutClick() {
             window.location.hash = "/logout";
@@ -13,8 +13,8 @@
       <div class="flex flex-row gap-2 justify-end items-center relative">
             <img src={profileIcon} alt="Profile" class="w-14 h-14 cursor-pointer" />
             <div class="flex flex-col gap-0">
-                  <p class="text-xl font-semibold">{$userdataStore?.name}</p>
-                  <p class="text-sm">{$userdataStore?.class}</p>
+                  <p class="text-xl font-semibold">{$userDataStore?.name}</p>
+                  <p class="text-sm">{$userDataStore?.class}</p>
             </div>
       </div>
 

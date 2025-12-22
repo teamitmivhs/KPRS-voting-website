@@ -1,43 +1,10 @@
-import type { DetailVoteStatsType, VoterType, VoteStatsType } from "./types";
+import { ApiError, type DetailVoteStatsResponseType, type GetCandidateResponseType, type GetTokensResponseType, type ResetVoteResponseType, type UserData, type VoteStatsResponseType } from "./types";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 /* -------------------------------------------------------------------------- */
 /*                                    Types                                   */
 /* -------------------------------------------------------------------------- */
-
-export enum Campus {
-	MM = 'MM',
-	PD = 'PD'
-}
-
-export interface UserData {
-	name: string;
-	token: string;
-	campus: Campus;
-	class: string;
-}
-
-export enum ApiError {
-	BadRequest = 'BadRequest', // 400
-	Unauthorized = 'Unauthorized', // 401
-	NotFound = 'NotFound', // 404
-	Conflict = 'Conflict', // 409
-	TooManyRequests = 'TooManyRequests', // 429
-	ServerError = 'ServerError', // 500
-	ServiceUnavailable = 'ServiceUnavailable', // 503
-	Error = 'Error' // Default
-}
-
-export interface ResetVoteResponse {
-	new_token: string;
-}
-
-export type GetTokensResponse = {
-	[campus_name in Campus]: {
-		[voter_name: string]: string
-	}
-}
 
 /* -------------------------------------------------------------------------- */
 /*                                   Helper                                   */
@@ -157,8 +124,8 @@ export const api = {
 	 * Request: voter_fullname (and cookies)
 	 * Response: new_token or ApiError
 	 */
-	resetVote: async (voter_fullname: string): Promise<ResetVoteResponse | ApiError> => {
-		return request<ResetVoteResponse>('/admin/reset', 'POST', { voter_fullname });
+	resetVote: async (voter_fullname: string): Promise<ResetVoteResponseType | ApiError> => {
+		return request<ResetVoteResponseType>('/admin/reset', 'POST', { voter_fullname });
 	},
 
 	/**
@@ -166,8 +133,8 @@ export const api = {
 	 * Request: (cookies only)
 	 * Response: tokens maps or ApiError
 	 */
-	getTokens: async (): Promise<GetTokensResponse | ApiError> => {
-		return request<GetTokensResponse>('/admin/token', 'GET');
+	getTokens: async (): Promise<GetTokensResponseType | ApiError> => {
+		return request<GetTokensResponseType>('/admin/token', 'GET');
 	},
 
 	/**
@@ -175,8 +142,8 @@ export const api = {
 	 * Request: (cookies only)
 	 * Response: detailed votes data or ApiError
 	 */
-	getDetailedVotes: async (): Promise<DetailVoteStatsType | ApiError> => {
-		return request<DetailVoteStatsType>('/admin/votes', 'GET');
+	getDetailedVotes: async (): Promise<DetailVoteStatsResponseType | ApiError> => {
+		return request<DetailVoteStatsResponseType>('/admin/votes', 'GET');
 	},
 
 	/**
@@ -184,7 +151,16 @@ export const api = {
 	 * Request: (cookies only)
 	 * Response: simple votes data or ApiError
 	 */
-	getSimpleVotes: async (): Promise<VoteStatsType | ApiError> => {
-		return request<VoteStatsType>('/admin/votes/simple', 'GET');
+	getSimpleVotes: async (): Promise<VoteStatsResponseType | ApiError> => {
+		return request<VoteStatsResponseType>('/admin/votes/simple', 'GET');
+	},
+	
+	/**
+	 * Get Simple Votes
+	 * Request: (cookies only)
+	 * Response: simple votes data or ApiError
+	 */
+	getCandidateData: async (): Promise<GetCandidateResponseType | ApiError> => {
+		return request<GetCandidateResponseType>('/candidate', 'GET');
 	},
 };

@@ -2,7 +2,7 @@
       import Chart from "chart.js/auto";
       import { useDetailedVotesStats, useDetailedVotesStatsEffect, useNumOfVoters, useSimpleVotesStats, useSimpleVotesStatsEffect, useVoterTokenEffect } from "../../lib/hooks/useStats";
       import { onMount } from "svelte";
-      import type { Campus } from "../../lib/api";
+      import type { Campus } from "../../lib/types";
 
       let voteStatsCanvasMM: HTMLCanvasElement | null;
       let votedByVoterStatsCanvasMM: HTMLCanvasElement | null;
@@ -56,9 +56,9 @@
                                     labels: {
                                           color: "white",
                                     },
-                                    onClick(e, legendItem, legend) {
+                                    onClick: (!isAnyVoteData["MM"]) ? (e, legendItem, legend) => {
                                           e.native?.preventDefault();
-                                    },
+                                    } : undefined,
                               },
                               tooltip: {
                                     enabled: isAnyVoteData["MM"]
@@ -83,9 +83,9 @@
                                     labels: {
                                           color: "white",
                                     },
-                                    onClick(e, legendItem, legend) {
+                                    onClick: (!isAnyVoteData["MM"]) ? (e, legendItem, legend) => {
                                           e.native?.preventDefault();
-                                    },
+                                    } : undefined,
                               },
                         },
                   },
@@ -107,9 +107,9 @@
                                     labels: {
                                           color: "white",
                                     },
-                                    onClick(e, legendItem, legend) {
+                                    onClick: (!isAnyVoteData["PD"]) ? (e, legendItem, legend) => {
                                           e.native?.preventDefault();
-                                    },
+                                    } : undefined,
                               },
                               tooltip: {
                                     enabled: isAnyVoteData["PD"]
@@ -135,9 +135,9 @@
                                     labels: {
                                           color: "white",
                                     },
-                                    onClick(e, legendItem, legend) {
+                                    onClick: (!isAnyVoteData["PD"]) ? (e, legendItem, legend) => {
                                           e.native?.preventDefault();
-                                    },
+                                    } : undefined,
                               },
                         },
                   },

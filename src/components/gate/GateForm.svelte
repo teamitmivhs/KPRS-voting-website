@@ -1,7 +1,7 @@
 <script lang="ts">
-      import { api, ApiError } from "../../lib/api";
+      import { api } from "../../lib/api";
       import { toasts } from "../../lib/hooks/useToast";
-      import { userdataStore } from "../../lib/hooks/useUserdata";
+      import { userDataStore } from "../../lib/hooks/useUserData";
 
       let isLoading = $state(false);
 
@@ -24,7 +24,7 @@
                         duration: 2000,
                   });
 
-                  userdataStore.set(result);
+                  userDataStore.set(result);
 
                   setTimeout(() => {
                         window.location.hash = "/vote";

@@ -1,11 +1,11 @@
 import { writable } from "svelte/store";
-import type { DetailVoteStatsType, NumOfVotersType, VoterTokenType, VoteStatsType } from "../types";
-import { api, ApiError, Campus } from "../api";
+import { ApiError, Campus, type DetailVoteStatsResponseType, type NumOfVotersType, type VoterTokenType, type VoteStatsResponseType } from "../types";
+import { api } from "../api";
 import { toasts } from "./useToast";
 
 
 function createDetailedVotesStore() {
-      const { subscribe, set, update  } = writable<DetailVoteStatsType>({
+      const { subscribe, set, update  } = writable<DetailVoteStatsResponseType>({
             "Ridwan Bagoes Setiawan": "Rasyad Rizky Ramadhan",
             "Aldi Fadlurrahman": "Andrea Farras"
       });
@@ -35,7 +35,7 @@ export async function useDetailedVotesStatsEffect() {
 
 
 function createSimpleVotesStore() {
-      const { subscribe, set, update  } = writable<VoteStatsType>({
+      const { subscribe, set, update  } = writable<VoteStatsResponseType>({
             MM: {},
             PD: {}
       });

@@ -1,6 +1,7 @@
 <script lang="ts">
-      import { api, ApiError, Campus } from "../../lib/api";
+      import { ApiError, Campus } from "../../lib/types";
       import { toasts } from "../../lib/hooks/useToast";
+      import { api } from "../../lib/api";
 
       let isLoading = $state(false);
 

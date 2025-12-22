@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { ApiError } from "../api";
+import { ApiError } from "../types";
 
 export type ToastType = 'success' | 'info' | 'error';
 

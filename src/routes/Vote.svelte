@@ -1,61 +1,12 @@
 <script lang="ts">
       import CandidateCard from "../components/vote/CandidateCard.svelte";
       import VoteNavbar from "../components/vote/VoteNavbar.svelte";
-      import { api, ApiError, Campus } from "../lib/api";
+      import { api } from "../lib/api";
       import { toasts } from "../lib/hooks/useToast";
-      import type { CandidateType } from "../lib/types";
-      import { userdataStore } from "../lib/hooks/useUserdata";
+      import { ApiError, Campus, type CandidateType } from "../lib/types";
+      import { userDataStore } from "../lib/hooks/useUserData";
+      import { candidateDataStore } from "../lib/hooks/useCandidateData";
 
-      const candidates: CandidateType[] = [
-            {
-                  president: "Rasyad Rizky Ramadhan",
-                  vice_president: "Aldi Fadlurrahmman",
-                  image: "/src/assets/candidates/candidate-1.jpg",
-                  visi: "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                  misi: [
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                  ],
-                  campus: Campus.MM,
-            },
-            {
-                  president: "Andrea Farras",
-                  vice_president: "Ghani Ilham",
-                  image: "/src/assets/candidates/candidate-2.jpg",
-                  visi: "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                  misi: [
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                  ],
-                  campus: Campus.MM,
-            },
-            {
-                  president: "Ridwan Bagoes Setiawan",
-                  vice_president: "Hanif Asyrof",
-                  image: "/src/assets/candidates/candidate-1.jpg",
-                  visi: "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                  misi: [
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                  ],
-                  campus: Campus.PD,
-            },
-            {
-                  president: "Muhammad Gilang",
-                  vice_president: "Raisal Adli Akbar",
-                  image: "/src/assets/candidates/candidate-2.jpg",
-                  visi: "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                  misi: [
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                        "lorem ipsum dolor sit amet consectetur adipisicing elit",
-                  ],
-                  campus: Campus.PD,
-            },
-      ];
 
       type CandidateState = "TIM" | "VISI" | "MISI";
 
@@ -63,8 +14,10 @@
       let is_voting = $state<boolean>(false);
 
       async function vote_candidate(index: number) {
+            if($candidateDataStore == null) return;
+            
             is_voting = true;
-            let result = await api.vote(candidates[index].president);
+            let result = await api.vote($candidateDataStore[index].president);
             if (result === undefined) {
                   toasts.add({
                         title: "Sukses!",
@@ -117,12 +70,11 @@
             });
       });
 
-      let userdata = $userdataStore;
 </script>
 
 <VoteNavbar />
 <div class="fixed top-4 left-4 -rotate-45 -translate-x-1/2 -translate-y-1/2 -z-10 bg-[#5e4c2c] w-[1200px] h-[500px]"></div>
-{#if authorized && userdata != null}
+{#if authorized && $userDataStore != null}
       <div class="flex flex-col w-screen h-full max-h-screen p-4 mt-24 sm:p-18 md:gap-4">
             <div class="flex flex-col gap-0 w-full items-center">
                   <h1 class="uppercase text-5xl font-thin italic">Use your <span class="font-bold">voice</span></h1>
@@ -133,9 +85,11 @@
                         ? 'opacity-50 pointer-events-none'
                         : ''}"
             >
-                  {#each candidates.filter((candidate) => candidate.campus === userdata.campus) as candidate, index}
-                        <CandidateCard {candidate} index={candidates.indexOf(candidate)} no={index + 1} bind:current_candidate_state {vote_candidate} />
-                  {/each}
+                  {#if $candidateDataStore != null}
+                        {#each $candidateDataStore.filter((candidate) => candidate.campus === $userDataStore.campus) as candidate, index}
+                              <CandidateCard {candidate} index={$candidateDataStore.indexOf(candidate)} no={index + 1} bind:current_candidate_state {vote_candidate} />
+                        {/each}
+                  {/if}
             </div>
       </div>
 {:else}
@@ -143,3 +97,4 @@
             <p class="opacity-50 text-3xl font-semibold">Loading...</p>
       </div>
 {/if}
+userDataStore
