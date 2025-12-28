@@ -43,6 +43,7 @@ async fn main() -> std::io::Result<()> {
 
     // Setup HTTP Server
     let server_port: u16 = std::env::var("SERVER_PORT").unwrap().parse::<u16>().unwrap();
+    let server_host: String = std::env::var("SERVER_HOST").unwrap().to_string();
 
     log_something("Setup", "Server Start!");
     HttpServer::new(move || {
@@ -71,7 +72,7 @@ async fn main() -> std::io::Result<()> {
             // WebSocket live connectio
             .service(live_votes_data)
     })
-    .bind(("127.0.0.1", server_port))?
+    .bind((server_host.as_str(), server_port))?
     .run()
     .await
 }
