@@ -24,6 +24,7 @@
     "chart.js": "^4.5.1",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "helmet": "^8.1.0",
     "svelte-spa-router": "^4.0.1",

@@ -4,16 +4,21 @@ import cors from "cors";
 import { fileURLToPath } from "url";
 import compression from "compression";
 import helmet from "helmet";
+import { configDotenv } from "dotenv";
+
+// Initialization
+configDotenv();
 
 const DIRNAME = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || "127.0.0.1";
 const CORS_ORIGIN = process.env.CORS_ORIGIN || undefined;
+const BACKEND_URL = process.env.BACKEND_API_BASE_URL || undefined;
 
-if (!CORS_ORIGIN) {
-    console.error("CORS ORIGIN is not specified!");
-    exit(1);
+if (!CORS_ORIGIN || !BACKEND_URL) {
+    console.error("CORS ORIGIN or BACKEND_URL is not specified!");
+    process.exit(1);
 }
 
 let request_count = 0;
@@ -22,6 +27,12 @@ let request_count = 0;
 app.use(helmet({
     crossOriginResourcePolicy: {
         policy: "cross-origin"
+    },
+    contentSecurityPolicy: {
+            directives: {
+                    ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+                    "connect-src": ["'self'", BACKEND_URL]
+            }
     }
 }));
 
