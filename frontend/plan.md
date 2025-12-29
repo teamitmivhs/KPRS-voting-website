@@ -1,0 +1,2 @@
+- ~~Create the hook for storing votes data~~
+- Connect to the backend API
