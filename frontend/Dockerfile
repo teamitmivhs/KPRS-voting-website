@@ -1,5 +1,5 @@
 # --- Stage 1: Build Frontend ---
-FROM node:24-alpine AS build-stage
+FROM node:20-alpine AS build-stage
 WORKDIR /kprs/src/frontend
 
 # Copy dependency files first to leverage Docker caching
@@ -13,24 +13,10 @@ COPY . .
 RUN npm run build
 
 # --- Stage 2: Production Server ---
-FROM node:24-alpine AS production-stage
-WORKDIR /kprs/src/frontend
-
-# Only install production-specific dependencies (Express, Compression, etc.)
-COPY package*.json ./
-RUN npm ci --omit=dev
+FROM nginx:alpine AS production-stage
 
 # Copy only the built 'dist' folder from the first stage
-COPY --from=build-stage /kprs/src/frontend/dist ./dist
+COPY --from=build-stage /kprs/src/frontend/dist /usr/share/nginx/html
 
 # Copy your Express server file
-COPY server.js ./
-
-# Set environment variables
-ENV NODE_ENV=production
-
-# Expose the port your Express app listens on
-EXPOSE 3000
-
-# Run the server
-CMD ["node", "server.js"]
+COPY nginx.conf /etc/nginx/nginx.conf

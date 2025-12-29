@@ -2,9 +2,6 @@ services:
         webserver:
                 build: .
                 environment:
-                        PORT: ${PORT}
-                        HOST: ${HOST}
-                        CORS_ORIGIN: ${CORS_ORIGIN}
                         BACKEND_API_BASE_URL: ${BACKEND_API_BASE_URL}
                 ports:
                         - "${PORT}:${PORT}"
