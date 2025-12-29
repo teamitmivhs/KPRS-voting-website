@@ -6,4 +6,4 @@ services:
                         HOST: ${HOST}
                         CORS_ORIGIN: ${CORS_ORIGIN}
                 ports:
-                        - "3000:3000"
+                        - "${PORT}:${PORT}"
