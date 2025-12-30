@@ -1,6 +1,6 @@
 import { ApiError, type DetailVoteStatsResponseType, type GetCandidateResponseType, type GetTokensResponseType, type ResetVoteResponseType, type UserData, type VoteStatsResponseType } from "./types";
 
-const BASE_URL = import.meta.env.BACKEND_API_BASE_URL || 'http://localhost:8080';
+const BASE_URL = import.meta.env.VITE_WEBSERVER_API_BASE_URL || 'http://localhost:8080';
 
 /* -------------------------------------------------------------------------- */
 /*                                    Types                                   */

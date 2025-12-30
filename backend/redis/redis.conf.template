@@ -1,0 +1,3 @@
+port ${REDIS_PORT}
+bind ${REDIS_BIND}
+requirepass ${REDIS_PASS}

@@ -1,0 +1,7 @@
+<h1>KPRS Web Frontend</h1>
+This folder is created to store files that related to frontend, including but not limited to:
+<ul>
+        <li>SvelteJS components</li>
+        <li>package.json</li>
+        <li>Nginx configuration</li>
+</ul>

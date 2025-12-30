@@ -2,6 +2,10 @@
 FROM node:20-alpine AS build-stage
 WORKDIR /kprs/src/frontend
 
+# Inject environment variables for build time
+ARG VITE_WEBSERVER_API_BASE_URL
+ENV VITE_WEBSERVER_API_BASE_URL=$VITE_WEBSERVER_API_BASE_URL
+
 # Copy dependency files first to leverage Docker caching
 COPY package*.json ./
 RUN npm ci
@@ -19,4 +23,4 @@ FROM nginx:alpine AS production-stage
 COPY --from=build-stage /kprs/src/frontend/dist /usr/share/nginx/html
 
 # Copy your Express server file
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template

@@ -1,7 +1,10 @@
 services:
         webserver:
-                build: .
+                build:
+                        context: .
+                        args:
+                                VITE_WEBSERVER_API_BASE_URL: ${VITE_WEBSERVER_API_BASE_URL}
                 environment:
-                        BACKEND_API_BASE_URL: ${BACKEND_API_BASE_URL}
+                        WEBSERVER_PORT: ${WEBSERVER_PORT}
                 ports:
-                        - "${PORT}:${PORT}"
+                        - "${WEBSERVER_PORT}:${WEBSERVER_PORT}"

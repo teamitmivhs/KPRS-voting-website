@@ -15,9 +15,9 @@ use kprs_web_api::{
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Setup dotenv
-    dotenvy::from_filename(".env").unwrap();
-    dotenvy::dotenv().unwrap();
+    // Setup dotenv (used for development, use docker env for production)
+    // dotenvy::from_filename("../.env").unwrap();
+    // dotenvy::dotenv().unwrap();
 
     // Setup SurrealDB
     init_db().await;
@@ -29,7 +29,7 @@ async fn main() -> std::io::Result<()> {
     init_admin_data().await;
 
     // Setup Redis
-    let redis_url: String = std::env::var("REDIS_URL").unwrap();
+    let redis_url: String = std::env::var("SERVER_REDIS_URL").unwrap();
 
     let redis_configuration: RedisConfig = RedisConfig {
         url: Some(redis_url),

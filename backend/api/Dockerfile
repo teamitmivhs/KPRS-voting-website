@@ -2,7 +2,7 @@
 FROM rust:latest
 
 # Set the working directory inside the container
-WORKDIR /kprs/src/backend/
+WORKDIR /kprs/src/backend/api/
 
 # Copy your project files into the container
 COPY . .

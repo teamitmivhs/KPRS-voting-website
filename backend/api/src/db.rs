@@ -218,7 +218,9 @@ pub async fn handle_live_changes() {
 }
 
 pub async fn init_db() {
-    let surrealdb_url: String = std::env::var("SURREAL_URL").unwrap();
+    let surrealdb_url: String = std::env::var("SERVER_SURREAL_URL").unwrap();
+    log_something("DEBUG", surrealdb_url.as_str());
+
 
     SURREAL_DB
         .connect::<Ws>(surrealdb_url)
@@ -227,15 +229,15 @@ pub async fn init_db() {
 
     SURREAL_DB
         .signin(Root {
-            username: std::env::var("SURREAL_USERNAME").unwrap().as_str(),
-            password: std::env::var("SURREAL_PASSWORD").unwrap().as_str(),
+            username: std::env::var("SERVER_SURREAL_USER").unwrap().as_str(),
+            password: std::env::var("SERVER_SURREAL_PASS").unwrap().as_str(),
         })
         .await
         .unwrap();
 
     SURREAL_DB
-        .use_ns(std::env::var("SURREAL_NS_NAME").unwrap())
-        .use_db(std::env::var("SURREAL_DB_NAME").unwrap())
+        .use_ns(std::env::var("SERVER_SURREAL_NS_NAME").unwrap())
+        .use_db(std::env::var("SERVER_SURREAL_DB_NAME").unwrap())
         .await
         .unwrap();
 
