@@ -44,6 +44,7 @@ async fn main() -> std::io::Result<()> {
     // Setup HTTP Server
     let server_port: u16 = std::env::var("SERVER_PORT").unwrap().parse::<u16>().unwrap();
     let server_host: String = std::env::var("SERVER_HOST").unwrap().to_string();
+    let allowed_origin: String = std::env::var("SERVER_ALLOWED_ORIGIN").unwrap().to_string();
 
     log_something("Setup", "Server Start!");
     HttpServer::new(move || {
@@ -53,7 +54,7 @@ async fn main() -> std::io::Result<()> {
 
             // Middleware
             .wrap(from_fn(middleware))
-            .wrap(Cors::permissive())
+            .wrap(Cors::default().allowed_origin(allowed_origin.as_str()))
 
             // Voter related API
             .service(voter_get_api)
