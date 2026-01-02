@@ -219,7 +219,6 @@ pub async fn handle_live_changes() {
 
 pub async fn init_db() {
     let surrealdb_url: String = std::env::var("SERVER_SURREAL_URL").unwrap();
-    log_something("DEBUG", surrealdb_url.as_str());
 
 
     SURREAL_DB

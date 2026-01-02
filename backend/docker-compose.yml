@@ -30,9 +30,6 @@ services:
                 build: ./api/
                 ports:
                         - "${SERVER_PORT}:${SERVER_PORT}"
-                environment:
-                        SERVER_REDIS_URL: redis://:${SERVER_REDIS_PASS}@${SERVER_REDIS_HOST}:${SERVER_REDIS_PORT}
-                        SERVER_SURREAL_URL: ${SERVER_SURREAL_HOST}:${SERVER_SURREAL_PORT}
                 env_file: "../.env"
 
                 depends_on:
