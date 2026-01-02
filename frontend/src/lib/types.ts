@@ -37,6 +37,11 @@ export type VoterType = {
       token: string
 };
 
+export type VotesType = {
+      voter_name: string;
+      candidate_name: string;
+}
+
 
 // --------------- API Response Type
 export interface ResetVoteResponseType {
@@ -77,4 +82,8 @@ export type VoterTokenType = {
 
 export type NumOfVotersType = {
       [CampusName in Campus]: number
+}
+
+export type GetVotesResponseType = {
+      [CampusName in Campus]: VotesType[]
 }
