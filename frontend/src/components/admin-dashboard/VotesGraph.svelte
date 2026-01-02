@@ -152,28 +152,28 @@
       });
 </script>
 
-<div class="w-full h-full flex flex-row gap-4 items-center">
-      <div class="flex flex-col items-center gap-4 w-full h-full p-12">
-            <p class="text-2xl font-semibold">MM</p>
+<div class="w-full h-full flex flex-col md:flex-row gap-4 items-center">
+      <div class="flex flex-col items-center gap-4 w-full h-full p-4 py-2">
+            <p class="text-2xl font-semibold">Kampus MM</p>
             <div class="flex flex-col gap-4 items-center w-full *:w-full">
-                  <div class="h-62 border border-white rounded-xl bg-gray-800 p-4 gap-2 flex flex-col justify-center items-center">
+                  <div class="h-62 border border-white rounded-xl p-4 gap-2 flex flex-col justify-center items-center">
                         <canvas class="max-w-64" bind:this={voteStatsCanvasMM}></canvas>
                         <p class="w-full text-center font-thin text-md">Voter per Candidates</p>
                   </div>
-                  <div class="h-62 border border-white rounded-xl bg-gray-800 p-4 gap-2 flex flex-col justify-center items-center">
+                  <div class="h-62 border border-white rounded-xl p-4 gap-2 flex flex-col justify-center items-center">
                         <canvas class="max-w-64" bind:this={votedByVoterStatsCanvasMM}></canvas>
                         <p class="w-full text-center font-thin text-md">Number of Votes</p>
                   </div>
             </div>
       </div>
-      <div class="flex flex-col items-center gap-4 w-full h-full p-12">
-            <p class="text-2xl font-semibold">PD</p>
+      <div class="flex flex-col items-center gap-4 w-full h-full p-4 py-2">
+            <p class="text-2xl font-semibold">Kampus PD</p>
             <div class="flex flex-col gap-4 items-center w-full *:w-full">
-                  <div class="h-62 border border-white rounded-xl bg-gray-800 p-4 gap-2 flex flex-col justify-center items-center">
+                  <div class="h-62 border border-white rounded-xl p-4 gap-2 flex flex-col justify-center items-center">
                         <canvas class="max-w-64" bind:this={voteStatsCanvasPD}></canvas>
                         <p class="w-full text-center font-thin text-md">Voter per Candidates</p>
                   </div>
-                  <div class="h-62 border border-white rounded-xl bg-gray-800 p-4 gap-2 flex flex-col justify-center items-center">
+                  <div class="h-62 border border-white rounded-xl p-4 gap-2 flex flex-col justify-center items-center">
                         <canvas class="max-w-64" bind:this={votedByVoterStatsCanvasPD}></canvas>
                         <p class="w-full text-center font-thin text-md">Number of Votes</p>
                   </div>
