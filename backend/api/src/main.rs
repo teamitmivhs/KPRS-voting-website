@@ -10,9 +10,10 @@ use kprs_web_api::{
     middleware::middleware,
     routes::{
         admin::{
-            admin_check_api, admin_login_api, admin_reset_api, admin_token_api, admin_votes_api,
-            admin_votes_simple_api,
-        }, candidate::candidate_get_api, voter::{voter_check_api, voter_get_api, voter_logout_api, voter_vote_api}, ws::live_votes_data
+            admin_check_api, admin_get_candidate_api, admin_login_api, admin_reset_api, admin_token_api, admin_votes_api, admin_votes_simple_api
+        },
+        voter::{voter_check_api, voter_get_api, voter_get_candidate_api, voter_logout_api, voter_vote_api},
+        ws::live_votes_data,
     },
     util::log_something,
 };
@@ -53,7 +54,10 @@ async fn main() -> std::io::Result<()> {
     let server_host: String = std::env::var("SERVER_HOST").unwrap().to_string();
     let allowed_origin: String = std::env::var("SERVER_ALLOWED_ORIGIN").unwrap().to_string();
 
-    log_something("Setup", format!("Server Listening at {}:{}!", server_host, server_port).as_str());
+    log_something(
+        "Setup",
+        format!("Server Listening at {}:{}!", server_host, server_port).as_str(),
+    );
     HttpServer::new(move || {
         let cors = Cors::default()
             .allowed_origin(allowed_origin.as_str())
@@ -65,17 +69,15 @@ async fn main() -> std::io::Result<()> {
         App::new()
             // State
             .app_data(web::Data::new(redis_pool.clone()))
-
             // Middleware
             .wrap(from_fn(middleware))
             .wrap(cors)
-
             // Voter related API
             .service(voter_get_api)
             .service(voter_vote_api)
             .service(voter_logout_api)
             .service(voter_check_api)
-
+            .service(voter_get_candidate_api)
             // Admin related API
             .service(admin_login_api)
             .service(admin_reset_api)
@@ -83,10 +85,7 @@ async fn main() -> std::io::Result<()> {
             .service(admin_votes_api)
             .service(admin_votes_simple_api)
             .service(admin_check_api)
-
-            // Candidate related API
-            .service(candidate_get_api)
-
+            .service(admin_get_candidate_api)
             // WebSocket live connectio
             .service(live_votes_data)
     })
