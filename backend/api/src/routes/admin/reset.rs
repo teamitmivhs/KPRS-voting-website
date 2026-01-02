@@ -21,15 +21,19 @@ struct ResetBodyResponseType {
 #[post("/admin/reset")]
 pub async fn post(body: web::Json<ResetBodyRequestType>, req: HttpRequest, redis_pool: web::Data<RedisPool>) -> HttpResponse {
       // Verify the admin token from cookies
-      let admin_token_cookie = req.cookie("admin_session_token");
-      let admin_token_cookie = match admin_token_cookie {
-            Some(cookie) => cookie.value().to_string(),
-            None => {
-                  return HttpResponse::Unauthorized().finish();
-            }
+      let admin_data = {
+            let admin_token_cookie = req.cookie("admin_session_token");
+            let admin_token_cookie = match admin_token_cookie {
+                  Some(cookie) => cookie.value().to_string(),
+                  None => {
+                        return HttpResponse::Unauthorized().finish();
+                  }
+            };
+
+            verify_admin_token(admin_token_cookie.as_str()).await
       };
 
-      let admin_data = verify_admin_token(admin_token_cookie).await;
+
       match admin_data {
             Ok(data) => data,
             Err(err) => {

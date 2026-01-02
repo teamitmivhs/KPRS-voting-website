@@ -9,19 +9,21 @@ use crate::{data::voter::get_voters_data, db::{Campus, Voter}, rdb::{RedisVoterT
 
 #[get("/admin/token")]
 pub async fn get(req: HttpRequest, redis_pool: web::Data<RedisPool>) -> HttpResponse {
-      // Get the admin token from request cookies
-      let cookie_admin_token = req.cookie("admin_session_token");
-      let cookie_admin_token = match cookie_admin_token {
-          Some(data) => data.value().to_string(),
-          None => {
-              return HttpResponse::Unauthorized().finish();
-          }
-      };
+      {
+            // Get the admin token from request cookies
+            let cookie_admin_token = req.cookie("admin_session_token");
+            let cookie_admin_token = match cookie_admin_token {
+            Some(data) => data.value().to_string(),
+            None => {
+                  return HttpResponse::Unauthorized().finish();
+            }
+            };
 
-      // Verify the admin token
-      match verify_admin_token(cookie_admin_token).await {
-            Ok(_) => (),
-            Err(response) => return response
+            // Verify the admin token
+            match verify_admin_token(cookie_admin_token).await {
+                  Ok(_) => (),
+                  Err(response) => return response
+            }
       }
 
 

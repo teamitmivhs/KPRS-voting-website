@@ -46,8 +46,11 @@ pub struct Voter {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Candidate {
-    pub name: String,
+    pub president: String,
+    pub vice_president: String,
     pub campus: Campus,
+    pub vision: String,
+    pub misions: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
@@ -220,11 +223,7 @@ pub async fn handle_live_changes() {
 pub async fn init_db() {
     let surrealdb_url: String = std::env::var("SERVER_SURREAL_URL").unwrap();
 
-
-    SURREAL_DB
-        .connect::<Ws>(surrealdb_url)
-        .await
-        .unwrap();
+    SURREAL_DB.connect::<Ws>(surrealdb_url).await.unwrap();
 
     SURREAL_DB
         .signin(Root {
