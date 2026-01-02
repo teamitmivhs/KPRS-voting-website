@@ -35,6 +35,7 @@ pub async fn update_votes_data() {
             db_all_votes_data.insert(campus, result);
       }
 
+      let total_votes_data: usize = db_all_votes_data.len();
 
       // Map all of the votes data for each campus
       for all_votes_data in db_all_votes_data {
@@ -59,7 +60,7 @@ pub async fn update_votes_data() {
       }
 
       // Log the success message
-      log_something("StaticData", "Static votes data successfully initialized.");
+      log_something("StaticData", format!("Static votes data successfully initialized. [{} total votes data]", total_votes_data).as_str());
 }
 
 

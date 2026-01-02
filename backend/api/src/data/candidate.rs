@@ -18,7 +18,7 @@ pub async fn get_candidates_data<'a>() -> &'a Vec<Candidate> {
             };
 
             // Log the success message
-            log_something("StaticData", "Static candidates data successfully initialized.");
+            log_something("StaticData", format!("Static candidates data successfully initialized. [{} total candidates]", db_all_candidates.len()).as_str());
 
             // Return the result
             db_all_candidates

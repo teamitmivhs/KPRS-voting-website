@@ -30,7 +30,7 @@ pub async fn update_admin_data() {
       }
 
 
-      log_something("StaticData", "Static users data successfully updated!");
+      log_something("StaticData", format!("Static admin data successfully updated! [{} total admin data]", locked_write_admin_data.len()).as_str());
 }
 
 pub fn get_all_admin_data() -> Arc<RwLock<HashMap<String, Admin>>> {

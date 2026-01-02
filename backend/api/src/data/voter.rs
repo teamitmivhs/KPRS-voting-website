@@ -20,6 +20,8 @@ pub async fn update_voters_data() {
             }
       };
 
+      let total_voters_data: usize = db_all_users.len();
+
       // Update the static users data
       {
             let mut locked_users_data = USERS_DATA.write().await;
@@ -29,7 +31,7 @@ pub async fn update_voters_data() {
       }
 
       // Log the success message
-      log_something("StaticData", "Static users data successfully updated!");
+      log_something("StaticData", format!("Static voters data successfully updated! [{} total of voters data!]", total_voters_data).as_str());
 }
 
 pub fn get_voters_data() -> Arc<RwLock<HashMap<String, Voter>>> {
