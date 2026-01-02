@@ -53,8 +53,7 @@ async fn main() -> std::io::Result<()> {
     let server_host: String = std::env::var("SERVER_HOST").unwrap().to_string();
     let allowed_origin: String = std::env::var("SERVER_ALLOWED_ORIGIN").unwrap().to_string();
 
-    log_something("DEBUG", allowed_origin.as_str());
-    log_something("Setup", "Server Start!");
+    log_something("Setup", format!("Server Listening at {}:{}!", server_host, server_port).as_str());
     HttpServer::new(move || {
         let cors = Cors::default()
             .allowed_origin(allowed_origin.as_str())

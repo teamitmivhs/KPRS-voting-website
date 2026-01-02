@@ -11,7 +11,7 @@ services:
                         - --log
                         - ${SURREAL_LOGLEVEL}
                         - --bind
-                        -  ${SURREAL_HOST}:${SURREAL_PORT}
+                        - ${SURREAL_HOST}:${SURREAL_PORT}
                         - --user
                         - ${SURREAL_USER}
                         - --pass
@@ -33,12 +33,12 @@ services:
                 env_file: "../.env"
 
                 depends_on:
-                    surrealdb:
-                        condition: service_started
-                        required: true
-                    redisdb:
-                        condition: service_started
-                        required: true
+                        surrealdb:
+                                condition: service_started
+                                required: true
+                        redisdb:
+                                condition: service_started
+                                required: true
 
 volumes:
         surreal-data:

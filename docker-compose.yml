@@ -9,6 +9,20 @@ services:
                         file: ./backend/docker-compose.yml
                         service: redisdb
                 profiles: ["backend", "complete"]
+        surrealdb-dev:
+                ports:
+                        - "${SURREAL_PORT}:${SURREAL_PORT}"
+                extends:
+                        file: ./backend/docker-compose.yml
+                        service: surrealdb
+                profiles: ["dev"]
+        redisdb-dev:
+                ports:
+                        - "${REDIS_PORT}:${REDIS_PORT}"
+                extends:
+                        file: ./backend/docker-compose.yml
+                        service: redisdb
+                profiles: ["dev"]
         rustserver:
                 extends:
                         file: ./backend/docker-compose.yml
