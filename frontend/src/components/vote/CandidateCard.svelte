@@ -44,7 +44,7 @@
                               <div class="w-full flex flex-col justify-end">
                                     <div>
                                           <p class="text-4xl font-light">Visi:</p>
-                                          <p class="font-semibold wrap-break-word">{candidate.visi}</p>
+                                          <p class="font-semibold wrap-break-word">{candidate.vision}</p>
                                     </div>
                               </div>
                         {:else if current_candidate_state[index] == "MISI"}
@@ -52,7 +52,7 @@
                                     <div>
                                           <p class="text-4xl font-light">Misi:</p>
                                           <ol class="list-decimal">
-                                                {#each candidate.misi as misi, index}
+                                                {#each candidate.misions as misi, index}
                                                       <li class="font-semibold wrap-break-word">{index + 1}. {misi}</li>
                                                 {/each}
                                           </ol>

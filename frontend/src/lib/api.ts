@@ -161,6 +161,6 @@ export const api = {
 	 * Response: simple votes data or ApiError
 	 */
 	getCandidateData: async (): Promise<GetCandidateResponseType | ApiError> => {
-		return request<GetCandidateResponseType>('/candidate', 'GET');
+		return request<GetCandidateResponseType>('/voter/candidate', 'GET');
 	},
 };

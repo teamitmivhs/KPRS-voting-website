@@ -13,8 +13,8 @@ export interface UserData {
 export type CandidateType = {
       president: string;
       vice_president: string;
-      visi: string;
-      misi: string[];
+      vision: string;
+      misions: string[];
       image: string;
       campus: Campus;
 };

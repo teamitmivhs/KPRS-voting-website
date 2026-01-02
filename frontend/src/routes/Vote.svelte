@@ -3,9 +3,9 @@
       import VoteNavbar from "../components/vote/VoteNavbar.svelte";
       import { api } from "../lib/api";
       import { toasts } from "../lib/hooks/useToast";
-      import { ApiError, Campus, type CandidateType } from "../lib/types";
+      import { ApiError } from "../lib/types";
       import { userDataStore } from "../lib/hooks/useUserdata";
-      import { candidateDataStore } from "../lib/hooks/useCandidateData";
+      import { candidateDataStore, useCandidateDataEffect } from "../lib/hooks/useCandidateData";
 
 
       type CandidateState = "TIM" | "VISI" | "MISI";
@@ -68,6 +68,7 @@
                         authorized = true;
                   }
             });
+            useCandidateDataEffect();
       });
 
 </script>
@@ -97,4 +98,3 @@
             <p class="opacity-50 text-3xl font-semibold">Loading...</p>
       </div>
 {/if}
-userDataStore
