@@ -51,6 +51,7 @@ pub struct Candidate {
     pub campus: Campus,
     pub vision: String,
     pub misions: Vec<String>,
+    pub image: String
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
