@@ -42,6 +42,10 @@ export type VotesType = {
       candidate_name: string;
 }
 
+export type VotesStatsType = {
+      [CampusName in Campus]: VotesType[]
+}
+
 
 // --------------- API Response Type
 export interface ResetVoteResponseType {
@@ -49,15 +53,17 @@ export interface ResetVoteResponseType {
 }
 
 export type GetTokensResponseType = {
-	[campus_name in Campus]: {
-		[voter_name: string]: string
+	[CampusName in Campus]: {
+		[VoterName: string]: string
 	}
 }
 
 export type VoterName = string;
 
 export type DetailVoteStatsResponseType = {
-      [CandidateName: string]: VoterName
+      [CampusName in Campus]: {
+            [CandidateName: string]: VoterName
+      }
 }
 
 export type VotesCount = number;
@@ -82,8 +88,4 @@ export type VoterTokenType = {
 
 export type NumOfVotersType = {
       [CampusName in Campus]: number
-}
-
-export type GetVotesResponseType = {
-      [CampusName in Campus]: VotesType[]
 }

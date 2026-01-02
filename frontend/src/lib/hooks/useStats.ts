@@ -1,13 +1,13 @@
 import { writable } from "svelte/store";
-import { ApiError, Campus, type DetailVoteStatsResponseType, type NumOfVotersType, type VoterTokenType, type VoteStatsResponseType } from "../types";
+import { ApiError, Campus, type DetailVoteStatsResponseType, type VotesStatsType, type NumOfVotersType, type VoterTokenType, type VoteStatsResponseType } from "../types";
 import { api } from "../api";
 import { toasts } from "./useToast";
 
 
 function createDetailedVotesStore() {
       const { subscribe, set, update  } = writable<DetailVoteStatsResponseType>({
-            "Ridwan Bagoes Setiawan": "Rasyad Rizky Ramadhan",
-            "Aldi Fadlurrahman": "Andrea Farras"
+            MM: {},
+            PD: {}
       });
 
       return {
@@ -121,6 +121,49 @@ export async function useVoterTokenEffect() {
             
             useVoterToken.set(voter_token_result);
             useNumOfVoters.set(num_of_voters_result);
+      }
+      else {
+            toasts.showAPI(result);
+            if(result === ApiError.Unauthorized) {
+                  window.location.hash = "/admin";
+            }
+      }
+}
+
+
+function createVotesDataStore() {
+      const { subscribe, set, update  } = writable<VotesStatsType>({
+            MM: [],
+            PD: []
+      });
+
+      return {
+            subscribe,
+            set,
+            update
+      }
+}
+
+export const useVotesData = createVotesDataStore();
+
+export async function useVotesDataEffect() {
+      const result = await api.getDetailedVotes();
+      if(typeof result == "object") {
+            let votesDataResult: VotesStatsType = {
+                  MM: [],
+                  PD: []
+            };
+
+            Object.keys(result).forEach((campusName) => {
+                  Object.entries(result[campusName as Campus]).forEach(([voterName, candidateName]) => {
+                        votesDataResult[campusName as Campus].push({
+                              voter_name: voterName,
+                              candidate_name: candidateName
+                        });
+                  });
+            })
+
+            useVotesData.set(votesDataResult);
       }
       else {
             toasts.showAPI(result);
