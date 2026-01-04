@@ -19,12 +19,7 @@
             is_voting = true;
             let result = await api.vote($candidateDataStore[index].president);
             if (result === undefined) {
-                  toasts.add({
-                        title: "Sukses!",
-                        message: "Terima kasih telah melakukan voting!",
-                        type: "success",
-                  });
-                  window.location.hash = "/logout";
+                  window.location.hash = "/thanks";
             } else {
                   switch (result) {
                         case ApiError.Unauthorized:
