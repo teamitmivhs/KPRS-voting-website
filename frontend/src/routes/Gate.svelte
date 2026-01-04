@@ -9,8 +9,4 @@
     </div>
 
     <GateForm />
-
-    <a href="/#faq" class="bg-transparent text-white rounded-full px-6 py-3 text-xl font-semibold cursor-pointer duration-150 satisfying-button">
-        Back to Home
-    </a>
 </div>

@@ -9,7 +9,7 @@
             </div>
       </div>
       <a
-            href="/#/gate"
+            href="/#"
             class="h-full flex justify-center items-center bg-white text-[#8a7143] rounded-full px-6 text-xl font-semibold border border-transparent cursor-pointer duration-150 satisfying-button"
       >
             Vote

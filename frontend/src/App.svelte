@@ -1,18 +1,18 @@
 <script>
       import Router from "svelte-spa-router";
-      import Home from "./routes/Home.svelte";
       import Gate from "./routes/Gate.svelte";
       import Vote from "./routes/Vote.svelte";
       import ToastContainer from "./components/common/ToastContainer.svelte";
       import Logout from "./routes/Logout.svelte";
       import AdminGate from "./routes/AdminGate.svelte";
       import AdminDashboard from "./routes/AdminDashboard.svelte";
+      import Thanks from "./routes/Thanks.svelte";
 
       const routes = {
-            "/": Home,
-            "/gate": Gate,
+            "/": Gate,
             "/vote": Vote,
             "/logout": Logout,
+            "/thanks": Thanks,
             "/admin": AdminGate,
             "/admin/dashboard": AdminDashboard,
       };

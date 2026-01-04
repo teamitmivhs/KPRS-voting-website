@@ -9,6 +9,6 @@
                   type: "error"
             });
       }).finally(() => {
-            window.location.hash = "/gate";
+            window.location.hash = "/";
       });
 </script>
