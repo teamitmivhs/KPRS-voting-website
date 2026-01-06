@@ -7,6 +7,7 @@
       import AdminGate from "./routes/AdminGate.svelte";
       import AdminDashboard from "./routes/AdminDashboard.svelte";
       import Thanks from "./routes/Thanks.svelte";
+      import BackgroundDecoration from "./components/common/BackgroundDecoration.svelte";
 
       const routes = {
             "/": Gate,
@@ -26,3 +27,4 @@
 
 <Router {routes} />
 <ToastContainer />
+<BackgroundDecoration />
