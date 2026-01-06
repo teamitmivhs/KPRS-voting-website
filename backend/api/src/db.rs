@@ -49,8 +49,6 @@ pub struct Candidate {
     pub president: String,
     pub vice_president: String,
     pub campus: Campus,
-    pub vision: String,
-    pub misions: Vec<String>,
     pub image: String
 }
 
