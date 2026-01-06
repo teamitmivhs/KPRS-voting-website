@@ -71,7 +71,7 @@
 <VoteNavbar />
 <div class="fixed top-4 left-4 -rotate-45 -translate-x-1/2 -translate-y-1/2 -z-10 bg-[#5e4c2c] w-[1200px] h-[500px]"></div>
 {#if authorized && $userDataStore != null}
-      <div class="flex flex-col w-screen h-full max-h-screen p-4 mt-24 sm:p-18 md:gap-4">
+      <div class="flex flex-col w-screen h-screen p-4 mt-24 sm:p-18 md:gap-4">
             <div class="flex flex-col gap-0 w-full items-center">
                   <h1 class="uppercase text-5xl font-thin italic">Use your <span class="font-bold">voice</span></h1>
                   <p class="text-md font-normal">Gunakan suara-mu! Pilih yang menurut-mu terbaik!</p>
@@ -83,7 +83,7 @@
             >
                   {#if $candidateDataStore != null}
                         {#each $candidateDataStore.filter((candidate) => candidate.campus === $userDataStore.campus) as candidate, index}
-                              <CandidateCard {candidate} index={$candidateDataStore.indexOf(candidate)} no={index + 1} bind:current_candidate_state {vote_candidate} />
+                              <CandidateCard {candidate} index={$candidateDataStore.indexOf(candidate)} no={index + 1} {vote_candidate} />
                         {/each}
                   {/if}
             </div>
