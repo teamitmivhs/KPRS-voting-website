@@ -15,7 +15,7 @@
     }
 </script>
 
-<div class="fixed top-4 right-4 z-50 flex duration-1000 {($toasts.isVisible ? 'translate-y-0 opacity-100' : '-translate-y-[150%] opacity-0')} pointer-events-none">
+<div class="fixed top-4 right-4 z-200 flex duration-1000 {($toasts.isVisible ? 'translate-y-0 opacity-100' : '-translate-y-[150%] opacity-0')} pointer-events-none">
     <div
         class="pointer-events-auto min-w-[300px] max-w-sm rounded-lg border p-4 shadow-lg backdrop-blur-md {getToastColor($toasts.type)}"
     >

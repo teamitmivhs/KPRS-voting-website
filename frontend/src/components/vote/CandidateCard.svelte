@@ -17,7 +17,7 @@
 </script>
 
 <div class="w-full flex-1 h-full p-6 overflow-hidden">
-        <div class="relative w-full h-full grid grid-rows-[1fr_auto]">
+        <button class="relative w-full h-full grid grid-rows-[1fr_auto] cursor-pointer duration-200 hover:scale-105" type="button" onclick={() => vote_candidate(index)}>
                 <div class="relative">
                         <div class="absolute left-1/2 -translate-x-1/2 h-full aspect-square">
                                 <img class="absolute w-full h-full" src={Frame} alt="frame">
@@ -33,5 +33,5 @@
                                 </div>
                         </div>
                 </div>
-        </div>
+        </button>
 </div>
