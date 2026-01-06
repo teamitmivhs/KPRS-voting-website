@@ -5,7 +5,7 @@
 <div class="min-h-screen w-full px-4 flex flex-col justify-center items-center text-[#fdfaf5] gap-8">
 
         <div class="flex flex-col items-center">
-                <p class="text-2xl opacity-80 text-center italic">Pemilihan ketua & wakil ketua <b>OSIS</b></p>
+                <p class="text-2xl opacity-80 drop-shadow-[0_1.2px_5px_rgba(255,0,0,1)] text-center italic">Pemilihan ketua & wakil ketua <b>OSIS</b></p>
                 <h1 class="text-5xl font-bold drop-shadow-[0_1.2px_5px_rgba(255,0,0,1)]">Pesta Demokrasi Sekolah</h1>
         </div>
 
