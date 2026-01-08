@@ -1,3 +1,3 @@
 - ~~Create the hook for storing votes data~~
 - ~~Connect to the backend API~~
--
+- Realtime data updates (after 10/01)
