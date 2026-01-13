@@ -1,5 +1,4 @@
-use actix_web::{HttpRequest, HttpResponse, get, web};
-use deadpool_redis::Pool as RedisPool;
+use actix_web::{HttpRequest, HttpResponse, get};
 
 use crate::{
     data::candidate::get_candidates_data,
@@ -8,7 +7,7 @@ use crate::{
 };
 
 #[get("/voter/candidate")]
-pub async fn get(req: HttpRequest, redis_pool: web::Data<RedisPool>) -> HttpResponse {
+pub async fn get(req: HttpRequest) -> HttpResponse {
     // Get admin or voter token from request cookie
     let voter_token = req.cookie("voter_token");
     let voter_token: String = match voter_token {
@@ -19,7 +18,7 @@ pub async fn get(req: HttpRequest, redis_pool: web::Data<RedisPool>) -> HttpResp
     };
 
     // Verify voter token
-    let voter_campus: Campus = match verify_voter_token(voter_token.as_str(), &redis_pool).await {
+    let voter_campus: Campus = match verify_voter_token(voter_token.as_str()).await {
         Ok(data) => data.campus,
         Err(response) => {
             return response;

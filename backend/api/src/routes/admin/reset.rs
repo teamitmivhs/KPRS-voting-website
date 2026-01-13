@@ -50,8 +50,8 @@ pub async fn post(body: web::Json<ResetBodyRequestType>, req: HttpRequest, redis
       // Verify the voter is exists
       let users_data = get_voters_data();
       let locked_users_data = users_data.read().await;
-      let voter_data: Option<&Voter> = locked_users_data.get(&target_voter_fullname);
-      let voter_data: &Voter = match voter_data {
+      let voter_data: Option<&Vec<Voter>> = locked_users_data.get(&target_voter_fullname);
+      let voter_data: &Vec<Voter> = match voter_data {
             Some(data) => data,
             None => {
                   log_something("PostReset", format!("An admin just wanting to reset a user that doesn't exists: {}", target_voter_fullname).as_str());

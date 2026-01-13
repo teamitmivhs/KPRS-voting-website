@@ -10,9 +10,13 @@ use kprs_web_api::{
     middleware::middleware,
     routes::{
         admin::{
-            admin_check_api, admin_get_candidate_api, admin_login_api, admin_reset_api, admin_token_api, admin_votes_api, admin_votes_simple_api
+            admin_check_api, admin_get_candidate_api, admin_login_api, admin_token_api,
+            admin_votes_api, admin_votes_simple_api,
         },
-        voter::{voter_check_api, voter_get_api, voter_get_candidate_api, voter_logout_api, voter_vote_api},
+        voter::{
+            voter_check_api, voter_get_api, voter_get_candidate_api, voter_logout_api,
+            voter_vote_api,
+        },
         ws::live_votes_data,
     },
     util::log_something,
@@ -80,7 +84,6 @@ async fn main() -> std::io::Result<()> {
             .service(voter_get_candidate_api)
             // Admin related API
             .service(admin_login_api)
-            .service(admin_reset_api)
             .service(admin_token_api)
             .service(admin_votes_api)
             .service(admin_votes_simple_api)

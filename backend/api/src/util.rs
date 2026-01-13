@@ -1,8 +1,4 @@
-use std::collections::HashMap;
-
 use actix_web::HttpResponse;
-use deadpool_redis::{Pool as RedisPool, PoolError};
-use redis::{AsyncCommands, RedisError};
 use time::{OffsetDateTime, macros::{format_description, offset}};
 use rand::Rng;
 
@@ -56,84 +52,35 @@ pub fn generate_token() -> String {
 
       result
 }
-pub async fn verify_voter_token<T: AsRef<str>>(target_user_token: T, redis_pool: &RedisPool) -> Result<Voter, HttpResponse> {
+pub async fn verify_voter_token<T: AsRef<str>>(target_user_token: T) -> Result<Voter, HttpResponse> {
       let target_user_token: &str = target_user_token.as_ref();
 
-      let redis_connection_result: Result<deadpool_redis::Connection, PoolError> =
-          redis_pool.get().await;
-      let mut redis_connection: deadpool_redis::Connection = match redis_connection_result {
-          Ok(connection) => connection,
-          Err(err) => {
-              log_error(
-                  "PostReset",
-                  format!(
-                      "There's an error when trying to get admin redis pool. Error: {}",
-                      err.to_string()
-                  )
-                  .as_str(),
-              );
-              return Err(HttpResponse::InternalServerError().finish());
-          }
-      };
-
-      let redis_user_token_result: Result<HashMap<String, String>, RedisError> =
-          redis_connection.hgetall("voter_token_reset").await;
-      let redis_user_tokens: HashMap<String, String> = match redis_user_token_result {
-          Ok(data) => data,
-          Err(err) => {
-              log_error("PostVote", err.to_string().as_str());
-              return Err(HttpResponse::InternalServerError().finish());
-          }
-      };
-      let redis_user_name_by_cookie_token: Option<String> = redis_user_tokens
-          .iter()
-          .find(|(_, v)| v.as_str() == target_user_token)
-          .map(|user_data| user_data.0.clone());
-
-
       // Verify the token from checking into the redis database
-      let static_voters_data = get_voters_data();
-      let locked_static_voters_data = static_voters_data.read().await;
-      let static_voter_data_maybe = locked_static_voters_data
-          .iter()
-          .find(|data| data.1.token == target_user_token);
-      let static_voter_name: Option<String> = match static_voter_data_maybe {
-          Some(data) => Some(data.0.clone()),
-          None => None,
-      };
+      let static_voter_data_maybe: Option<Voter> = (async ||{
+        let static_voters_data = get_voters_data();
+        let locked_static_voters_data = static_voters_data.read().await;
+        for voter_list in locked_static_voters_data.iter() {
+                let voter_data_maybe = voter_list.1.iter().find(|data| data.token.as_str() == target_user_token);
+                match voter_data_maybe {
+                        Some(data) => {
+                                return Some(data.clone())
+                        },
+                        None => ()
+                }
+        }
+        None
+      })().await;
 
-
-      // Verify the token using this step:
-      // 1. Positive if the token is inside Redis
-      // 2. Negative if the token is inside of the voter inside Hashmap and not inside Redis
-      // 3. Negative if the token is inside the Redis
-      let redis_user_token_by_data_user_name = match &static_voter_name {
-          Some(fullname) => redis_user_tokens.get(fullname),
-          None => None,
-      };
-
-      if redis_user_name_by_cookie_token.is_none()
-          && (redis_user_token_by_data_user_name.is_some() || static_voter_name.is_none())
-      {
-          return Err(HttpResponse::Unauthorized().finish());
-      }
-
-      let target_voter_data: Option<&Voter> = match redis_user_name_by_cookie_token.or(static_voter_name) {
-              Some(data) => locked_static_voters_data.get(&data),
+      // Verify the token
+      let target_voter_data: Voter = match static_voter_data_maybe {
+              Some(voter_data) => voter_data,
               None => {
                     log_error("PostVote", "There's no voter data from either Static data and Redis data but the condition passes!");
                     return Err(HttpResponse::Unauthorized().finish());
               }
       };
-      let target_voter_data: &Voter = match target_voter_data {
-            Some(data) => data,
-            None => {
-                  log_error("PostVote", "There's no voter data in static variables but it seems that the data is exists in Redis!");
-                  return Err(HttpResponse::InternalServerError().finish());
-            }
-      };
 
-      Ok(target_voter_data.clone())
+      Ok(target_voter_data)
 }
 
 pub async fn verify_admin_token<T: AsRef<str>>(target_admin_token: T) -> Result<Admin, HttpResponse> {

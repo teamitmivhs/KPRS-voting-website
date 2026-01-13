@@ -1,7 +1,6 @@
 use std::{collections::HashMap, sync::Arc};
 
 use actix_web::{HttpRequest, HttpResponse, post, web};
-use deadpool_redis::{self, Pool as RedisPool};
 use serde::Deserialize;
 use tokio::sync::RwLock;
 
@@ -19,8 +18,7 @@ struct VoteBodyRequest {
 #[post("/voter/vote")]
 pub async fn post(
     body: web::Json<VoteBodyRequest>,
-    req: HttpRequest,
-    redis_pool: web::Data<RedisPool>,
+    req: HttpRequest
 ) -> HttpResponse {
     // Get the user token from request cookies
     let cookie_user_token = req.cookie("voter_token");
@@ -33,7 +31,7 @@ pub async fn post(
 
 
     // Verify the token from checking into the Redis database
-    let target_voter_data: Voter = match verify_voter_token(cookie_user_token.as_str(), &redis_pool).await {
+    let target_voter_data: Voter = match verify_voter_token(cookie_user_token.as_str()).await {
           Ok(voter) => voter,
           Err(response) => {
                 return response;

@@ -5,7 +5,7 @@ use tokio::sync::RwLock;
 use crate::{db::{Voter, get_all_users}, util::{log_error, log_something}};
 
 
-static USERS_DATA: Lazy<Arc<RwLock<HashMap<String, Voter>>>> = Lazy::new(|| {
+static USERS_DATA: Lazy<Arc<RwLock<HashMap<String, Vec<Voter>>>>> = Lazy::new(|| {
       Arc::new(RwLock::new(HashMap::new()))
 });
 
@@ -26,7 +26,11 @@ pub async fn update_voters_data() {
       {
             let mut locked_users_data = USERS_DATA.write().await;
             for db_user in db_all_users {
-                  locked_users_data.insert(db_user.name.clone(), db_user);
+                  locked_users_data.entry(db_user.name.clone())
+                          .and_modify(|data| {
+                                  data.push(db_user.clone());
+                          })
+                          .or_insert(vec![db_user.clone()]);
             }
       }
 
@@ -34,7 +38,7 @@ pub async fn update_voters_data() {
       log_something("StaticData", format!("Static voters data successfully updated! [{} total of voters data!]", total_voters_data).as_str());
 }
 
-pub fn get_voters_data() -> Arc<RwLock<HashMap<String, Voter>>> {
+pub fn get_voters_data() -> Arc<RwLock<HashMap<String, Vec<Voter>>>> {
       USERS_DATA.clone()
 }
 
