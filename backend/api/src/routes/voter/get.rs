@@ -1,7 +1,6 @@
 use crate::{
     data::voter::get_voters_data,
     db::Voter,
-    util::{log_error, log_something},
 };
 use actix_web::{HttpResponse, cookie::Cookie, post, web};
 use serde::Deserialize;

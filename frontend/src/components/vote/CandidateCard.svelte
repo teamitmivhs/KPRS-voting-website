@@ -7,21 +7,21 @@
                 candidate,
                 index,
                 no,
-                vote_candidate,
+                select_candidate,
         }: {
                 candidate: CandidateType;
                 index: number;
                 no: number;
-                vote_candidate: (index: number) => void;
+                select_candidate: (index: number) => void;
         } = $props();
 </script>
 
 <div class="w-full flex-1 h-full p-6 overflow-hidden">
-        <button class="relative w-full h-full grid grid-rows-[1fr_auto] cursor-pointer duration-200 hover:scale-105" type="button" onclick={() => vote_candidate(index)}>
+        <button class="relative w-full h-full grid grid-rows-[1fr_auto] cursor-pointer duration-200 hover:scale-105" type="button" onclick={() => select_candidate(index)}>
                 <div class="relative">
                         <div class="absolute left-1/2 -translate-x-1/2 h-full aspect-square">
                                 <img class="absolute w-full h-full" src={Frame} alt="frame">
-                                <img class="absolute w-full h-full object-cover -z-1 duration-100 rounded-2xl" src={candidate.image} alt={candidate.president} />
+                                <img class="absolute w-4/5 h-4/5 object-cover -z-1 duration-100 rounded-2xl left-[55%] top-1/2 -translate-1/2" src={candidate.image} alt={candidate.president} />
                         </div>
                 </div>
                 <div class="w-full h-full p-4 z-1 flex flex-col">

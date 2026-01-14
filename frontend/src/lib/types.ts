@@ -1,89 +1,88 @@
 export enum Campus {
-	MM = 'MM',
-	PD = 'PD'
+        MM = "MM",
+        PD = "PD",
 }
 
 export interface UserData {
-	name: string;
-	token: string;
-	campus: Campus;
-	class: string;
+        name: string;
+        token: string;
+        campus: Campus;
+        class: string;
 }
 
 export type CandidateType = {
-      president: string;
-      vice_president: string;
-      image: string;
-      campus: Campus;
+        president: string;
+        vice_president: string;
+        image: string;
+        campus: Campus;
+        vision: string;
+        misions: string[];
 };
 
 export enum ApiError {
-	BadRequest = 'BadRequest', // 400
-	Unauthorized = 'Unauthorized', // 401
-	NotFound = 'NotFound', // 404
-	Conflict = 'Conflict', // 409
-	TooManyRequests = 'TooManyRequests', // 429
-	ServerError = 'ServerError', // 500
-	ServiceUnavailable = 'ServiceUnavailable', // 503
-	Error = 'Error' // Default
+        BadRequest = "BadRequest", // 400
+        Unauthorized = "Unauthorized", // 401
+        NotFound = "NotFound", // 404
+        Conflict = "Conflict", // 409
+        TooManyRequests = "TooManyRequests", // 429
+        ServerError = "ServerError", // 500
+        ServiceUnavailable = "ServiceUnavailable", // 503
+        Error = "Error", // Default
 }
 
 export type VoterType = {
-      name: string;
-      campus: Campus;
-      class: string,
-      token: string
+        name: string;
+        campus: Campus;
+        class: string;
+        token: string;
 };
 
 export type VotesType = {
-      voter_name: string;
-      candidate_name: string;
-}
+        voter_name: string;
+        candidate_name: string;
+};
 
 export type VotesStatsType = {
-      [CampusName in Campus]: VotesType[]
-}
-
+        [CampusName in Campus]: VotesType[];
+};
 
 // --------------- API Response Type
 export interface ResetVoteResponseType {
-	new_token: string;
+        new_token: string;
 }
 
 export type GetTokensResponseType = {
-	[CampusName in Campus]: {
-		[VoterName: string]: string
-	}
-}
+        [CampusName in Campus]: {
+                [VoterName: string]: string;
+        };
+};
 
 export type VoterName = string;
 
 export type DetailVoteStatsResponseType = {
-      [CampusName in Campus]: {
-            [CandidateName: string]: VoterName
-      }
-}
+        [CampusName in Campus]: {
+                [CandidateName: string]: VoterName;
+        };
+};
 
 export type VotesCount = number;
 
 export type VoteStatsResponseType = {
-      [CampusName in Campus]: {
-            [CandidateName: string]: VotesCount
-      }
+        [CampusName in Campus]: {
+                [CandidateName: string]: VotesCount;
+        };
 };
 
-
 export type GetCandidateResponseType = CandidateType[];
-
 
 export type VoterToken = string;
 
 export type VoterTokenType = {
-      [CampusName in Campus]: {
-            [VoterName: string]: VoterToken
-      }
-}
+        [CampusName in Campus]: {
+                [VoterName: string]: VoterToken;
+        };
+};
 
 export type NumOfVotersType = {
-      [CampusName in Campus]: number
-}
+        [CampusName in Campus]: number;
+};
