@@ -75,13 +75,13 @@
 <div class="fixed top-4 left-4 -rotate-45 -translate-x-1/2 -translate-y-1/2 -z-10 bg-[#5e4c2c] w-[1200px] h-[500px]"></div>
 {#if authorized && $userDataStore != null}
         {#if $candidateDataStore != null}
-                <div class={`absolute flex flex-col w-screen h-screen p-4 mt-24 sm:p-18 md:gap-4`}>
-                        <div class="w-full max-w-full h-full max-h-[calc(100vh-18rem)] flex-1 relative left-1/2 -translate-x-1/2 flex flex-col md:flex-row gap-4 {isVoting ? 'opacity-50 pointer-events-none' : ''}">
+                <div class={`flex flex-col justify-center w-screen h-screen p-4 sm:p-18 md:gap-4`}>
+                        <div class="w-full max-w-full h-full max-h-[calc(100vh-18rem)] flex-1 relative left-1/2 -translate-x-1/2 flex flex-col md:justify-center md:items-center md:flex-row gap-4 {isVoting ? 'opacity-50 pointer-events-none' : ''}">
                                 {#each $candidateDataStore.filter((candidate) => candidate.campus === $userDataStore.campus) as candidate, index}
-                                        <div class={`w-full h-full duration-250 ${selectedCandidateIndex === null ? "" : "pointer-events-none opacity-0"}`}>
+                                        <div class={`w-full h-full flex justify-center items-center duration-250 ${selectedCandidateIndex === null ? "" : "pointer-events-none opacity-0"}`}>
                                                 <CandidateCard {candidate} index={$candidateDataStore.indexOf(candidate)} no={index + 1} {select_candidate} />
                                         </div>
-                                        <div class={`absolute top-0 left-0 w-full h-full duration-250 ${selectedCandidateIndex == index ? "opacity-100" : "pointer-events-none opacity-0"}`}>
+                                        <div class={`absolute top-0 left-0 w-full h-max duration-250 ${selectedCandidateIndex == index ? "opacity-100" : "pointer-events-none opacity-0 hidden"}`}>
                                                 <CandidateInfo {candidate} {index} no={index+1} back_action={() => select_candidate(null)} vote_action={vote_candidate} />
                                         </div>
                                 {/each}

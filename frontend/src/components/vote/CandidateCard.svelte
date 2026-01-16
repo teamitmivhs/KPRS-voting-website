@@ -16,7 +16,7 @@
         } = $props();
 </script>
 
-<div class="w-full flex-1 h-full p-6 overflow-hidden">
+<div class="w-[45vw] max-w-[550px] flex-1 aspect-square p-6 overflow-hidden ">
         <button class="relative w-full h-full grid grid-rows-[1fr_auto] cursor-pointer duration-200 hover:scale-105" type="button" onclick={() => select_candidate(index)}>
                 <div class="relative">
                         <div class="absolute left-1/2 -translate-x-1/2 h-full aspect-square">
