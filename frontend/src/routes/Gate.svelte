@@ -1,7 +1,12 @@
 <script lang="ts">
+        import OsisLogo from "../assets/materials/osis-logo.webp";
+
         import GateForm from "../components/gate/GateForm.svelte";
 </script>
 
+<div class="fixed w-36 top-10 left-1/2 -translate-x-1/2">
+        <img src={OsisLogo} alt="OSIS LOGO">
+</div>
 <div class="min-h-screen w-full px-4 flex flex-col justify-center items-center text-[#fdfaf5] gap-8">
 
         <div class="flex flex-col items-center">
