@@ -1,6 +1,6 @@
 <script lang="ts">
         import type { CandidateType } from "../../lib/types";
-        import Frame from "../../assets/materials/frame.png";
+        import Frame from "../../assets/materials/frame.webp";
 
 
         let {

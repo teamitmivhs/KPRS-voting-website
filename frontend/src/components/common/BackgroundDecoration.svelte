@@ -1,10 +1,10 @@
 <script lang="ts">
-        import CurtainLeft from "../../assets/materials/curtain-left.png";
-        import CurtainRight from "../../assets/materials/curtain-right.png";
-        import BackgroundMark from "../../assets/materials/bg-mark.png";
-        import Batik from "../../assets/materials/batik.png";
-        import Pillar from "../../assets/materials/pillar.png";
-        import Stage from "../../assets/materials/stage.png";
+        import CurtainLeft from "../../assets/materials/curtain-left.webp";
+        import CurtainRight from "../../assets/materials/curtain-right.webp";
+        import BackgroundMark from "../../assets/materials/bg-mark.webp";
+        import Batik from "../../assets/materials/batik.webp";
+        import Pillar from "../../assets/materials/pillar.webp";
+        import Stage from "../../assets/materials/stage.webp";
 </script>
 
 <div class="top-0 left-0 fixed w-dvw h-dvh opacity-85 pointer-events-none -z-10">
