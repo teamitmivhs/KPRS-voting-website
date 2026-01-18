@@ -16,10 +16,10 @@ export async function connectingLiveDashboard() {
                                 try {
                                         let socket = new WebSocket(BASE_URL)
                                         socket.onopen = () => {
-                                                res(socket);
-                                        }
-                                        socket.onclose = () => {
-                                                res(null);
+                                                console.log("Connected to live votes data!");
+                                                if (!ready_to_connect) {
+                                                        res(socket);
+                                                }
                                         }
                                 }
                                 catch {
@@ -33,37 +33,35 @@ export async function connectingLiveDashboard() {
         ready_to_connect = true;
 
         if (socket === null) {
+                console.log("Reconnecting after 10s");
                 await delay(10000);
-                console.log("reconnecting..");
+                console.log("Reconnecting..");
                 connectingLiveDashboard();
                 return;
         }
 
-        // Standard event listeners
-        // Listen for opening connection (connected connection)
-        socket.addEventListener("open", (event) => {
-                console.log("Connected to server");
-        });
-
+        // Event listeners
         // Listen for message from server
-        socket.addEventListener("message", (event) => {
+        socket.onmessage = (event) => {
                 console.log("Message from server:", event.data);
-        });
+        };
 
         // Listen if there's an error
-        socket.addEventListener("error", (error) => {
+        socket.onerror = (error) => {
                 console.error("WebSocket error:", error);
                 if (socket) {
                         socket.close();
                 }
-        });
+        };
 
         // Listen if the connection is closed
-        socket.addEventListener("close", () => {
+        socket.onclose = () => {
                 console.log("Connection closed");
-                setTimeout(() => {
-                        console.log("Reconnecting...");
-                }, 1500);
-                setTimeout(connectingLiveDashboard, 2000);
-        });
+                console.log("Reconnecting...");
+                if (socket) {
+                        socket.close();
+                        socket = null;
+                }
+                connectingLiveDashboard();
+        };
 }
