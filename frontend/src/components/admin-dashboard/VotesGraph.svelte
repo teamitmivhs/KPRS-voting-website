@@ -1,9 +1,9 @@
 <script lang="ts">
         import Chart from "chart.js/auto";
-        import { useDetailedVotesStats, useDetailedVotesStatsEffect, useNumOfVoters, useSimpleVotesStats, useSimpleVotesStatsEffect, useVoterTokenEffect } from "../../lib/hooks/useStats";
+        import { useDetailedVotesStats, useNumOfVoters, useSimpleVotesStats } from "../../lib/hooks/useStats";
         import { onMount } from "svelte";
         import type { Campus } from "../../lib/types";
-        import { connectingLiveDashboard } from "../../lib/livews";
+        import { cleanupLiveDashboard, connectingLiveDashboard } from "../../lib/livews";
 
         let voteStatsCanvasMM: HTMLCanvasElement | null;
         let votedByVoterStatsCanvasMM: HTMLCanvasElement | null;
@@ -11,10 +11,11 @@
         let votedByVoterStatsCanvasPD: HTMLCanvasElement | null;
 
         onMount(() => {
-                useDetailedVotesStatsEffect();
-                useSimpleVotesStatsEffect();
-                useVoterTokenEffect();
                 connectingLiveDashboard();
+
+                return () => {
+                        cleanupLiveDashboard();
+                }
         });
 
         $effect(() => {

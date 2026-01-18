@@ -142,6 +142,8 @@ pub async fn handle_live_changes() {
                         _ => "",
                     };
 
+                    message += notification.data.campus.as_str();
+                    message += ",";
                     message += notification.data.voter_name.as_str();
                     message += ",";
                     message += notification.data.candidate_name.as_str();
