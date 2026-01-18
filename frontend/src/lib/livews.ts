@@ -9,6 +9,55 @@ const BASE_URL = import.meta.env.VITE_WEBSOCKET_URL || "ws://localhost:8080/live
 let socket: WebSocket | null;
 let ready_to_connect: boolean = true;
 
+function onLiveClose() {
+        console.info("Connection closed");
+        console.info("Reconnecting...");
+        reconnect();
+}
+
+function onLiveError(error: Event) {
+        console.error("WebSocket error:", error);
+        reconnect();
+}
+
+function onLiveUpdate(event: MessageEvent) {
+        const message: string = event.data;
+        console.debug("Data from server:", message);
+
+        const category_seperated = message.split("-");
+        const category = category_seperated.at(0);
+        const action_seperated = (category_seperated.at(1) ?? ":").split(":");
+        const action = action_seperated.at(0);
+        const votes_data = (action_seperated.at(1) ?? ",").split(",");
+        const campus = votes_data.at(0);
+        const voter = votes_data.at(1) ?? "";
+        const candidate = votes_data.at(2) ?? "";
+
+        // If the category is 'v' means about votes data
+        if (category == "v") {
+                // If the action is 'c' means about creating data
+                if (action == "c") {
+                        console.debug(`${voter} just votes ${candidate}!`);
+                        // Insert the new data
+                        let new_data = get(useVotesData);
+                        new_data[campus as Campus].push({
+                                voter_name: voter,
+                                candidate_name: candidate,
+                        });
+                        useVotesData.set(new_data);
+                }
+                // If the action is 'd' means about deleting data
+                else if (action == "d") {
+                        console.debug(`${voter} just unvote ${candidate}!`);
+                        // Delete the data
+                        let new_data = get(useVotesData);
+                        new_data[campus as Campus] = new_data[campus as Campus].filter((data) => data.voter_name != voter);
+                        useVotesData.set(new_data);
+                }
+        }
+}
+
+
 async function reconnect() {
         if (socket) {
                 socket.close();
@@ -73,55 +122,13 @@ export async function connectingLiveDashboard() {
 
         // Event listeners
         // Listen for message from server
-        socket.onmessage = (event) => {
-                const message: string = event.data;
-                console.debug("Data from server:", message);
-
-                const category_seperated = message.split("-");
-                const category = category_seperated.at(0);
-                const action_seperated = (category_seperated.at(1) ?? ":").split(":");
-                const action = action_seperated.at(0);
-                const votes_data = (action_seperated.at(1) ?? ",").split(",");
-                const campus = votes_data.at(0);
-                const voter = votes_data.at(1) ?? "";
-                const candidate = votes_data.at(2) ?? "";
-
-                // If the category is 'v' means about votes data
-                if (category == "v") {
-                        // If the action is 'c' means about creating data
-                        if (action == "c") {
-                                console.debug(`${voter} just votes ${candidate}!`);
-                                // Insert the new data
-                                let new_data = get(useVotesData);
-                                new_data[campus as Campus].push({
-                                        voter_name: voter,
-                                        candidate_name: candidate,
-                                });
-                                useVotesData.set(new_data);
-                        }
-                        // If the action is 'd' means about deleting data
-                        else if (action == "d") {
-                                console.debug(`${voter} just unvote ${candidate}!`);
-                                // Delete the data
-                                let new_data = get(useVotesData);
-                                new_data[campus as Campus].filter((data) => data.voter_name != voter);
-                                useVotesData.set(new_data);
-                        }
-                }
-        };
+        socket.onmessage = onLiveUpdate;
 
         // Listen if there's an error
-        socket.onerror = (error) => {
-                console.error("WebSocket error:", error);
-                reconnect();
-        };
+        socket.onerror = onLiveError;
 
         // Listen if the connection is closed
-        socket.onclose = () => {
-                console.info("Connection closed");
-                console.info("Reconnecting...");
-                reconnect();
-        };
+        socket.onclose = onLiveClose;
 }
 
 export async function cleanupLiveDashboard() {
