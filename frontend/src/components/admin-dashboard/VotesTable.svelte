@@ -6,11 +6,11 @@
       })
 </script>
 
-<div class="flex flex-row items-strecth *:h-full *:w-full">
+<div class="flex flex-col md:flex-row items-strecth *:h-full *:w-full">
         <div class="flex flex-col p-4 space-y-4">
                 <h3 class="font-bold w-full text-center px-4 py-2 text-2xl">Kampus MM</h3>
                 <div class="border border-white flex flex-col rounded-2xl">
-                        <div class="grid grid-rows-12 *:grid *:grid-cols-[24px_1fr_1fr] *:place-items-center">
+                        <div class="grid grid-rows-12 overflow-y-auto *:grid *:grid-cols-[24px_1fr_1fr] *:place-items-center">
                                 <div class="font-semibold border-b border-white p-4">
                                         <div>
                                                 No.
