@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
-import { useChartVotesStats, useVotesData } from "./hooks/useStats";
+import { useChartVotesMMStats, useChartVotesPDStats, useVotesData } from "./hooks/useStats";
 import { toasts } from "./hooks/useToast";
-import type { Campus } from "./types";
+import { Campus } from "./types";
 import { await_for_with_default, delay } from "./util";
 
 const BASE_URL = import.meta.env.VITE_WEBSOCKET_URL || "ws://localhost:8080/live";
@@ -47,9 +47,16 @@ function onLiveUpdate(event: MessageEvent) {
                         useVotesData.set(new_data);
 
                         // Update chart data
-                        let currentSimpleVotesData = get(useChartVotesStats);
-                        currentSimpleVotesData[campus as Campus][candidate] = (currentSimpleVotesData[campus as Campus][candidate]??0)+1;
-                        useChartVotesStats.set(currentSimpleVotesData);
+                        if ((campus as Campus) === Campus.MM) {
+                                let currentSimpleVotesData = get(useChartVotesMMStats);
+                                currentSimpleVotesData[candidate] = (currentSimpleVotesData[candidate]??0)+1;
+                                useChartVotesMMStats.set(currentSimpleVotesData);
+                        }
+                        else {
+                                let currentSimpleVotesData = get(useChartVotesPDStats);
+                                currentSimpleVotesData[candidate] = (currentSimpleVotesData[candidate]??0)+1;
+                                useChartVotesPDStats.set(currentSimpleVotesData);
+                        }
                 }
                 // If the action is 'd' means about deleting data
                 else if (action == "d") {
@@ -60,9 +67,16 @@ function onLiveUpdate(event: MessageEvent) {
                         useVotesData.set(new_data);
 
                         // Update chart data
-                        let currentSimpleVotesData = get(useChartVotesStats);
-                        currentSimpleVotesData[campus as Campus][candidate] = (currentSimpleVotesData[campus as Campus][candidate]??1)-1;
-                        useChartVotesStats.set(currentSimpleVotesData);
+                        if ((campus as Campus) === Campus.MM) {
+                                let currentSimpleVotesData = get(useChartVotesMMStats);
+                                currentSimpleVotesData[candidate] = (currentSimpleVotesData[candidate]??1)-1;
+                                useChartVotesMMStats.set(currentSimpleVotesData);
+                        }
+                        else {
+                                let currentSimpleVotesData = get(useChartVotesPDStats);
+                                currentSimpleVotesData[candidate] = (currentSimpleVotesData[candidate]??1)-1;
+                                useChartVotesPDStats.set(currentSimpleVotesData);
+                        }
                 }
         }
 }

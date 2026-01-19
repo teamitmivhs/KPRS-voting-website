@@ -1,6 +1,6 @@
 <script lang="ts">
         import Chart from "chart.js/auto";
-        import { useNumOfVoters, useChartVotesStats, useChartVotesStatsEffect, useVoterTokenEffect } from "../../lib/hooks/useStats";
+        import { useNumOfVoters, useChartVotesPDStats, useChartVotesMMStats, useChartVotesStatsEffect, useVoterTokenEffect } from "../../lib/hooks/useStats";
         import { onMount } from "svelte";
         import type { Campus } from "../../lib/types";
         import { cleanupLiveDashboard, connectingLiveDashboard } from "../../lib/livews";
@@ -24,33 +24,21 @@
         });
 
         $effect(() => {
-                if (!voteStatsCanvasMM || !votedByVoterStatsCanvasMM || !voteStatsCanvasPD || !votedByVoterStatsCanvasPD) return;
+                if (!voteStatsCanvasMM || !votedByVoterStatsCanvasMM) return;
 
                 // Data
-                let votedCount: {
-                        [key in Campus]: number;
-                } = {
-                        MM: (Object.values($useChartVotesStats["MM"]).length > 0)?(Object.values($useChartVotesStats["MM"]).reduce((a,b) => a+b)):0,
-                        PD: (Object.values($useChartVotesStats["PD"]).length > 0)?(Object.values($useChartVotesStats["PD"]).reduce((a,b) => a+b)):0,
-                };
-                console.debug(votedCount);
-
-                let isAnyVoteData: {
-                        [key in Campus]: boolean;
-                } = {
-                        MM: votedCount["MM"] != 0,
-                        PD: votedCount["PD"] != 0,
-                };
+                let votedCount: number = (Object.values($useChartVotesMMStats).length > 0)?(Object.values($useChartVotesMMStats).reduce((a,b) => a+b)):0;
+                let isAnyVoteData: boolean = votedCount != 0;
 
                 // Chart Generation
                 let chart1MM = new Chart(voteStatsCanvasMM, {
                         type: "pie",
                         data: {
-                                labels: isAnyVoteData["MM"] ? Object.keys($useChartVotesStats["MM"]) : ["No Votes Data"],
+                                labels: isAnyVoteData ? Object.keys($useChartVotesMMStats) : ["No Votes Data"],
                                 datasets: [
                                         {
-                                                data: isAnyVoteData["MM"] ? Object.values($useChartVotesStats["MM"]) : [1],
-                                                backgroundColor: isAnyVoteData["MM"] ? ["#52ACFF", "#ACCC99"] : ["#333"],
+                                                data: isAnyVoteData ? Object.values($useChartVotesMMStats) : [1],
+                                                backgroundColor: isAnyVoteData ? ["#52ACFF", "#ACCC99"] : ["#333"],
                                         },
                                 ],
                         },
@@ -60,14 +48,14 @@
                                                 labels: {
                                                         color: "white",
                                                 },
-                                                onClick: !isAnyVoteData["MM"]
+                                                onClick: !isAnyVoteData
                                                         ? (e, legendItem, legend) => {
                                                                   e.native?.preventDefault();
                                                           }
                                                         : undefined,
                                         },
                                         tooltip: {
-                                                enabled: isAnyVoteData["MM"],
+                                                enabled: isAnyVoteData,
                                         },
                                 },
                         },
@@ -78,7 +66,7 @@
                                 labels: ["Voted", "Haven't Voted"],
                                 datasets: [
                                         {
-                                                data: [votedCount["MM"], $useNumOfVoters["MM"] - votedCount["MM"]],
+                                                data: [votedCount, $useNumOfVoters["MM"] - votedCount],
                                                 backgroundColor: ["#0055FF", "#FF0055"],
                                         },
                                 ],
@@ -89,63 +77,7 @@
                                                 labels: {
                                                         color: "white",
                                                 },
-                                                onClick: !isAnyVoteData["MM"]
-                                                        ? (e, legendItem, legend) => {
-                                                                  e.native?.preventDefault();
-                                                          }
-                                                        : undefined,
-                                        },
-                                },
-                        },
-                });
-                let chart1PD = new Chart(voteStatsCanvasPD, {
-                        type: "pie",
-                        data: {
-                                labels: isAnyVoteData["PD"] ? Object.keys($useChartVotesStats["PD"]) : ["No Votes Data"],
-                                datasets: [
-                                        {
-                                                data: isAnyVoteData["PD"] ? Object.values($useChartVotesStats["PD"]) : [1],
-                                                backgroundColor: isAnyVoteData["PD"] ? ["#52ACFF", "#ACCC99"] : ["#333"],
-                                        },
-                                ],
-                        },
-                        options: {
-                                plugins: {
-                                        legend: {
-                                                labels: {
-                                                        color: "white",
-                                                },
-                                                onClick: !isAnyVoteData["PD"]
-                                                        ? (e, legendItem, legend) => {
-                                                                  e.native?.preventDefault();
-                                                          }
-                                                        : undefined,
-                                        },
-                                        tooltip: {
-                                                enabled: isAnyVoteData["PD"],
-                                        },
-                                },
-                        },
-                });
-
-                let chart2PD = new Chart(votedByVoterStatsCanvasPD, {
-                        type: "pie",
-                        data: {
-                                labels: ["Voted", "Haven't Voted"],
-                                datasets: [
-                                        {
-                                                data: [votedCount["PD"], $useNumOfVoters["PD"] - votedCount["PD"]],
-                                                backgroundColor: ["#0055FF", "#FF0055"],
-                                        },
-                                ],
-                        },
-                        options: {
-                                plugins: {
-                                        legend: {
-                                                labels: {
-                                                        color: "white",
-                                                },
-                                                onClick: !isAnyVoteData["PD"]
+                                                onClick: !isAnyVoteData
                                                         ? (e, legendItem, legend) => {
                                                                   e.native?.preventDefault();
                                                           }
@@ -158,10 +90,77 @@
                 return () => {
                         chart1MM.destroy();
                         chart2MM.destroy();
+                };
+        });
+        $effect(() => {
+                if (!voteStatsCanvasPD || !votedByVoterStatsCanvasPD) return;
+
+                // Data
+                let votedCount: number = (Object.values($useChartVotesPDStats).length > 0)?(Object.values($useChartVotesPDStats).reduce((a,b) => a+b)):0;
+                let isAnyVoteData: boolean = votedCount != 0;
+
+                let chart1PD = new Chart(voteStatsCanvasPD, {
+                        type: "pie",
+                        data: {
+                                labels: isAnyVoteData ? Object.keys($useChartVotesPDStats) : ["No Votes Data"],
+                                datasets: [
+                                        {
+                                                data: isAnyVoteData ? Object.values($useChartVotesPDStats) : [1],
+                                                backgroundColor: isAnyVoteData ? ["#52ACFF", "#ACCC99"] : ["#333"],
+                                        },
+                                ],
+                        },
+                        options: {
+                                plugins: {
+                                        legend: {
+                                                labels: {
+                                                        color: "white",
+                                                },
+                                                onClick: !isAnyVoteData
+                                                        ? (e, legendItem, legend) => {
+                                                                  e.native?.preventDefault();
+                                                          }
+                                                        : undefined,
+                                        },
+                                        tooltip: {
+                                                enabled: isAnyVoteData,
+                                        },
+                                },
+                        },
+                });
+
+                let chart2PD = new Chart(votedByVoterStatsCanvasPD, {
+                        type: "pie",
+                        data: {
+                                labels: ["Voted", "Haven't Voted"],
+                                datasets: [
+                                        {
+                                                data: [votedCount, $useNumOfVoters["PD"] - votedCount],
+                                                backgroundColor: ["#0055FF", "#FF0055"],
+                                        },
+                                ],
+                        },
+                        options: {
+                                plugins: {
+                                        legend: {
+                                                labels: {
+                                                        color: "white",
+                                                },
+                                                onClick: !isAnyVoteData
+                                                        ? (e, legendItem, legend) => {
+                                                                  e.native?.preventDefault();
+                                                          }
+                                                        : undefined,
+                                        },
+                                },
+                        },
+                });
+
+                return () => {
                         chart1PD.destroy();
                         chart2PD.destroy();
                 };
-        });
+        })
 </script>
 
 <div class="w-full h-full flex flex-col md:flex-row gap-4 items-center">

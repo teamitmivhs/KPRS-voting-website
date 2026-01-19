@@ -1,13 +1,10 @@
 import { writable } from "svelte/store";
-import { ApiError, Campus, type DetailVoteStatsResponseType, type VotesStatsType, type NumOfVotersType, type VoterTokenType, type VoteStatsResponseType, type VotesType } from "../types";
+import { ApiError, Campus, type DetailVoteStatsResponseType, type VotesStatsType, type NumOfVotersType, type VoterTokenType, type VoteStatsResponseType, type VotesType, type VoteStatsType } from "../types";
 import { api } from "../api";
 import { toasts } from "./useToast";
 
-function createChartVotesStore() {
-        const { subscribe, set, update } = writable<VoteStatsResponseType>({
-                MM: {},
-                PD: {},
-        });
+function createChartVotesPDStore() {
+        const { subscribe, set, update } = writable<VoteStatsType>({});
 
         return {
                 subscribe,
@@ -16,12 +13,25 @@ function createChartVotesStore() {
         };
 }
 
-export const useChartVotesStats = createChartVotesStore();
+export const useChartVotesPDStats = createChartVotesPDStore();
+
+function createChartVotesMMStore() {
+        const { subscribe, set, update } = writable<VoteStatsType>({});
+
+        return {
+                subscribe,
+                set,
+                update,
+        };
+}
+
+export const useChartVotesMMStats = createChartVotesMMStore();
 
 export async function useChartVotesStatsEffect() {
         const result = await api.getSimpleVotes();
         if (typeof result == "object") {
-                useChartVotesStats.set(result);
+                useChartVotesPDStats.set(result["PD"]);
+                useChartVotesMMStats.set(result["MM"]);
         } else {
                 toasts.showAPI(result);
                 if (result === ApiError.Unauthorized) {
