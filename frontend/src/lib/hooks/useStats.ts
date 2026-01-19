@@ -3,34 +3,7 @@ import { ApiError, Campus, type DetailVoteStatsResponseType, type VotesStatsType
 import { api } from "../api";
 import { toasts } from "./useToast";
 
-function createDetailedVotesStore() {
-        const { subscribe, set, update } = writable<DetailVoteStatsResponseType>({
-                MM: {},
-                PD: {},
-        });
-
-        return {
-                subscribe,
-                set,
-                update,
-        };
-}
-
-export const useDetailedVotesStats = createDetailedVotesStore();
-
-export async function useDetailedVotesStatsEffect() {
-        const result = await api.getDetailedVotes();
-        if (typeof result == "object") {
-                useDetailedVotesStats.set(result);
-        } else {
-                toasts.showAPI(result);
-                if (result === ApiError.Unauthorized) {
-                        window.location.hash = "/admin";
-                }
-        }
-}
-
-function createSimpleVotesStore() {
+function createChartVotesStore() {
         const { subscribe, set, update } = writable<VoteStatsResponseType>({
                 MM: {},
                 PD: {},
@@ -43,12 +16,12 @@ function createSimpleVotesStore() {
         };
 }
 
-export const useSimpleVotesStats = createSimpleVotesStore();
+export const useChartVotesStats = createChartVotesStore();
 
-export async function useSimpleVotesStatsEffect() {
+export async function useChartVotesStatsEffect() {
         const result = await api.getSimpleVotes();
         if (typeof result == "object") {
-                useSimpleVotesStats.set(result);
+                useChartVotesStats.set(result);
         } else {
                 toasts.showAPI(result);
                 if (result === ApiError.Unauthorized) {

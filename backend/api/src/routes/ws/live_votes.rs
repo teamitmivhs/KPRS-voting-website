@@ -35,6 +35,7 @@ pub async fn ws_handler(req: HttpRequest, body: web::Payload) -> actix_web::Resu
             return Ok(HttpResponse::TooManyRequests().finish());
         }
         locked_write_live_clients.insert(client_id.clone(), session.clone());
+        log_something("LiveVotes", format!("[+]Current number of websocket client: {}", locked_write_live_clients.len()).as_str());
     }
 
     // Handle messages
@@ -50,7 +51,7 @@ pub async fn ws_handler(req: HttpRequest, body: web::Payload) -> actix_web::Resu
 
         let live_clients: Arc<RwLock<HashMap<String, actix_ws::Session>>> = get_live_clients();
         let mut locked_write_live_clients = live_clients.write().await;
-        log_something("DEBUG", "WELLL");
+        log_something("LiveVotes", format!("[-]Current number of websocket client: {}", locked_write_live_clients.len()).as_str());
         locked_write_live_clients.remove(&client_id);
     });
 

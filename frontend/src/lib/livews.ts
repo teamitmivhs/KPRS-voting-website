@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { useDetailedVotesStatsEffect, useSimpleVotesStatsEffect, useVoterTokenEffect, useVotesData } from "./hooks/useStats";
+import { useChartVotesStats, useVotesData } from "./hooks/useStats";
 import { toasts } from "./hooks/useToast";
 import type { Campus } from "./types";
 import { await_for_with_default, delay } from "./util";
@@ -38,21 +38,31 @@ function onLiveUpdate(event: MessageEvent) {
                 // If the action is 'c' means about creating data
                 if (action == "c") {
                         console.debug(`${voter} just votes ${candidate}!`);
-                        // Insert the new data
+                        // Update table data
                         let new_data = get(useVotesData);
                         new_data[campus as Campus].push({
                                 voter_name: voter,
                                 candidate_name: candidate,
                         });
                         useVotesData.set(new_data);
+
+                        // Update chart data
+                        let currentSimpleVotesData = get(useChartVotesStats);
+                        currentSimpleVotesData[campus as Campus][candidate] = (currentSimpleVotesData[campus as Campus][candidate]??0)+1;
+                        useChartVotesStats.set(currentSimpleVotesData);
                 }
                 // If the action is 'd' means about deleting data
                 else if (action == "d") {
                         console.debug(`${voter} just unvote ${candidate}!`);
-                        // Delete the data
+                        // Update table data
                         let new_data = get(useVotesData);
                         new_data[campus as Campus] = new_data[campus as Campus].filter((data) => data.voter_name != voter);
                         useVotesData.set(new_data);
+
+                        // Update chart data
+                        let currentSimpleVotesData = get(useChartVotesStats);
+                        currentSimpleVotesData[campus as Campus][candidate] = (currentSimpleVotesData[campus as Campus][candidate]??1)-1;
+                        useChartVotesStats.set(currentSimpleVotesData);
                 }
         }
 }
@@ -84,9 +94,6 @@ export async function connectingLiveDashboard() {
                         return new Promise((res, _) => {
                                 try {
                                         let socket = new WebSocket(BASE_URL);
-                                        useDetailedVotesStatsEffect();
-                                        useSimpleVotesStatsEffect();
-                                        useVoterTokenEffect();
                                         socket.onopen = () => {
                                                 console.info("Connected to live votes data!");
                                                 toasts.add({

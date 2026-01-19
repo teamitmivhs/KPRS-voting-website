@@ -1,6 +1,6 @@
 <script lang="ts">
         import Chart from "chart.js/auto";
-        import { useDetailedVotesStats, useNumOfVoters, useSimpleVotesStats } from "../../lib/hooks/useStats";
+        import { useNumOfVoters, useChartVotesStats, useChartVotesStatsEffect, useVoterTokenEffect } from "../../lib/hooks/useStats";
         import { onMount } from "svelte";
         import type { Campus } from "../../lib/types";
         import { cleanupLiveDashboard, connectingLiveDashboard } from "../../lib/livews";
@@ -19,35 +19,37 @@
         });
 
         $effect(() => {
+                useChartVotesStatsEffect();
+                useVoterTokenEffect();
+        });
+
+        $effect(() => {
                 if (!voteStatsCanvasMM || !votedByVoterStatsCanvasMM || !voteStatsCanvasPD || !votedByVoterStatsCanvasPD) return;
 
                 // Data
                 let votedCount: {
                         [key in Campus]: number;
                 } = {
-                        MM: 0,
-                        PD: 0,
+                        MM: (Object.values($useChartVotesStats["MM"]).length > 0)?(Object.values($useChartVotesStats["MM"]).reduce((a,b) => a+b)):0,
+                        PD: (Object.values($useChartVotesStats["PD"]).length > 0)?(Object.values($useChartVotesStats["PD"]).reduce((a,b) => a+b)):0,
                 };
-
-                Object.entries($useDetailedVotesStats).forEach(([campus, data]) => {
-                        votedCount[campus as Campus] = Object.keys(data).length;
-                });
+                console.debug(votedCount);
 
                 let isAnyVoteData: {
                         [key in Campus]: boolean;
                 } = {
-                        MM: Object.values($useSimpleVotesStats["MM"]).some((vote_count) => vote_count != 0),
-                        PD: Object.values($useSimpleVotesStats["PD"]).some((vote_count) => vote_count != 0),
+                        MM: votedCount["MM"] != 0,
+                        PD: votedCount["PD"] != 0,
                 };
 
                 // Chart Generation
                 let chart1MM = new Chart(voteStatsCanvasMM, {
                         type: "pie",
                         data: {
-                                labels: isAnyVoteData["MM"] ? Object.keys($useSimpleVotesStats["MM"]) : ["No Votes Data"],
+                                labels: isAnyVoteData["MM"] ? Object.keys($useChartVotesStats["MM"]) : ["No Votes Data"],
                                 datasets: [
                                         {
-                                                data: isAnyVoteData["MM"] ? Object.values($useSimpleVotesStats["MM"]) : [1],
+                                                data: isAnyVoteData["MM"] ? Object.values($useChartVotesStats["MM"]) : [1],
                                                 backgroundColor: isAnyVoteData["MM"] ? ["#52ACFF", "#ACCC99"] : ["#333"],
                                         },
                                 ],
@@ -99,10 +101,10 @@
                 let chart1PD = new Chart(voteStatsCanvasPD, {
                         type: "pie",
                         data: {
-                                labels: isAnyVoteData["PD"] ? Object.keys($useSimpleVotesStats["PD"]) : ["No Votes Data"],
+                                labels: isAnyVoteData["PD"] ? Object.keys($useChartVotesStats["PD"]) : ["No Votes Data"],
                                 datasets: [
                                         {
-                                                data: isAnyVoteData["PD"] ? Object.values($useSimpleVotesStats["PD"]) : [1],
+                                                data: isAnyVoteData["PD"] ? Object.values($useChartVotesStats["PD"]) : [1],
                                                 backgroundColor: isAnyVoteData["PD"] ? ["#52ACFF", "#ACCC99"] : ["#333"],
                                         },
                                 ],
