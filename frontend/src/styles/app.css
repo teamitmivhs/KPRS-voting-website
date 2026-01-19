@@ -8,11 +8,6 @@
             color: white;
       }
 
-      html {
-              height: max-content;
-              overflow: hidden;
-      }
-
       body {
             background-color: #151376;
             min-height: 100vh;

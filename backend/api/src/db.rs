@@ -142,6 +142,8 @@ pub async fn handle_live_changes() {
                         _ => "",
                     };
 
+                    message += notification.data.campus.as_str();
+                    message += ",";
                     message += notification.data.voter_name.as_str();
                     message += ",";
                     message += notification.data.candidate_name.as_str();
@@ -149,6 +151,8 @@ pub async fn handle_live_changes() {
                     for (_, session) in locked_write_live_clients.iter_mut() {
                         let _ = session.text(message.as_str()).await;
                     }
+
+                    log_something("LiveUpdate", "Send broadcast message to all websocket clients!");
                 }
                 Err(err) => {
                     log_error(

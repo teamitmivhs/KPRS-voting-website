@@ -67,10 +67,12 @@ export type DetailVoteStatsResponseType = {
 
 export type VotesCount = number;
 
+export type VoteStatsType = {
+        [CandidateName: string]: VotesCount;
+};
+
 export type VoteStatsResponseType = {
-        [CampusName in Campus]: {
-                [CandidateName: string]: VotesCount;
-        };
+        [CampusName in Campus]: VoteStatsType;
 };
 
 export type GetCandidateResponseType = CandidateType[];
