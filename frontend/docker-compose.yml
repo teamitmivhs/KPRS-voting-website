@@ -4,6 +4,7 @@ services:
                         context: .
                         args:
                                 VITE_WEBSERVER_API_BASE_URL: ${VITE_WEBSERVER_API_BASE_URL}
+                                VITE_WEBSOCKET_URL: ${VITE_WEBSOCKET_URL}
                 environment:
                         WEBSERVER_PORT: ${WEBSERVER_PORT}
                 ports:

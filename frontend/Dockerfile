@@ -4,7 +4,10 @@ WORKDIR /kprs/src/frontend
 
 # Inject environment variables for build time
 ARG VITE_WEBSERVER_API_BASE_URL
+ARG VITE_WEBSOCKET_URL
+
 ENV VITE_WEBSERVER_API_BASE_URL=$VITE_WEBSERVER_API_BASE_URL
+ENV VITE_WEBSOCKET_URL=$VITE_WEBSOCKET_URL
 
 # Copy dependency files first to leverage Docker caching
 COPY package*.json ./
