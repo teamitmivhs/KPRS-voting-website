@@ -54,7 +54,7 @@
                   type="password"
                   id="token"
                   bind:value={token}
-                  placeholder="Tokennya mana woi"
+                  placeholder="Masukkan token kalian!"
                   class="w-full p-3 rounded-xl border-2 border-[#8a7143]/40 focus:outline-none focus:border-[#8a7143] focus:ring-2 focus:ring-[#8a7143]/20 transition-all placeholder:text-gray-400"
                   required
             />

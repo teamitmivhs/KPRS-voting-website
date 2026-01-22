@@ -25,8 +25,8 @@ use kprs_web_api::{
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Setup dotenv (used for development, use docker env for production)
-    dotenvy::from_filename("../../.env").unwrap();
-    dotenvy::dotenv().unwrap();
+    // dotenvy::from_filename("../../.env").unwrap();
+    // dotenvy::dotenv().unwrap();
 
     // Setup SurrealDB
     init_db().await;
