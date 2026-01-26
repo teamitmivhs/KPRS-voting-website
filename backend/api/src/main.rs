@@ -1,6 +1,7 @@
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, http, middleware::from_fn, web};
 use deadpool_redis::{Config as RedisConfig, Runtime as RedisRuntime};
+use tokio::time::{sleep, Duration};
 use kprs_web_api::{
     data::{
         admin::init_admin_data, candidate::init_candidates_data, vote::init_votes_count,
@@ -27,6 +28,9 @@ async fn main() -> std::io::Result<()> {
     // Setup dotenv (used for development, use docker env for production)
     // dotenvy::from_filename("../../.env").unwrap();
     // dotenvy::dotenv().unwrap();
+
+    // Wait for another service to complete successfully
+    sleep(Duration::from_secs(5)).await;
 
     // Setup SurrealDB
     init_db().await;

@@ -27,6 +27,9 @@ services:
                 extends:
                         file: ./backend/docker-compose.yml
                         service: rustserver
+                depends_on:
+                        surrealdb:
+                                condition: service_started
                 profiles: ["backend", "complete"]
         webserver:
                 extends:
